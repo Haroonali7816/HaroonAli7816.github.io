@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Muhammad Haroon Ali — Computer Science Student</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- Loading bar -->
+  <div id="loader">
+    <div class="loader-inner">
+      <p class="loader-name">Muhammad Haroon Ali</p>
+      <p class="loader-role">Computer Science &amp; AI Student<span class="loader-cursor">_</span></p>
+      <div class="loader-progress-row">
+        <div class="loader-track"><div class="loader-fill" id="loader-fill"></div></div>
+        <span id="loader-percent">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-search" id="nav-search">
+      <button id="search-toggle" class="search-toggle" aria-label="Search this page">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <input type="text" id="site-search" class="nav-search-input" placeholder="Search..." autocomplete="off" />
+      <div id="search-results" class="search-results"></div>
+    </div>
+    <div class="nav-actions">
+      <button id="theme-toggle">🌙</button>
+      <a href="assests/documents/resume.pdf" target="_blank" class="nav-resume">Resume</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header id="hero">
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>Open to Werkstudent opportunities</p>
+        <h1>Endlessly curious about how <span class="highlight" id="rotating-word">systems</span> really work.</h1>
+
+        <p class="hero-sub">
+          Computer Science student at Saarland University, driven by curiosity
+          for systems programming and compiler construction. I build things to
+          deeply understand them — bridging low-level systems with applied AI/ML.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#projects" class="btn-primary">View My Work ↗</a>
+          <a href="#about" class="btn-outline">Learn More</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number" data-target="7">0</span>+
+            <p>Projects</p>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-target="2">0</span>
+            <p>Years at University</p>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-target="8">0</span>+
+            <p>Technical Skills</p>
+          </div>
+        </div>
+        <p class="scroll-hint">Scroll to explore ↓</p>
+      </div>
+
+      <div class="hero-photo-wrap">
+        <img src="assests/images/profile.png" alt="Muhammad Haroon Ali" class="hero-photo" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Skills Marquee -->
+  <section id="marquee-section">
+    <div class="marquee">
+      <div class="marquee-track">
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" alt="Java">Java</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg" alt="C">C</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" alt="C++">C++</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python">Python</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ocaml/ocaml-original.svg" alt="OCaml">OCaml</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" alt="HTML">HTML</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" alt="CSS">CSS</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript">JavaScript</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" alt="Git">Git/GitHub</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg" alt="scikit-learn">scikit-learn</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg" alt="pandas">pandas</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg" alt="NumPy">NumPy</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="SQL">SQL</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="Linux">Linux</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <p class="section-label">Who I Am</p>
+    <h2>Computer Science Student.</h2>
+    <p class="about-text">
+      Hi, I'm <strong>Muhammad Haroon Ali</strong> — a Computer Science
+      student at <strong>Saarland University</strong> who learns best by
+      building. Give me an interesting problem and I'll take it apart,
+      rebuild it from scratch, and figure out exactly how it works.
+    </p>
+    <p class="about-text">
+      That curiosity has taken me from writing a C compiler with my own
+      RISC-V backend, to building a 2.5D graphics engine from raw pixels, to
+      training ML models on real datasets. I pick things up fast, I'm
+      comfortable being thrown into the deep end, and I genuinely enjoy the
+      process of debugging something at 2am until it finally clicks.
+    </p>
+    <p class="about-text">
+      Outside of code, I care about clear communication and working well
+      with a team — skills I sharpened as a teaching assistant, breaking
+      down hard concepts for others. Based in
+      <strong>Saarbrücken, Germany</strong>, and actively looking for a
+      Werkstudent role where I can learn from experienced engineers and
+      ship real things.
+    </p>
+
+    <div class="skill-cards">
+      <div class="skill-card">
+        <h3>Compiler Construction</h3>
+        <p>Built a multi-pass C compiler in Java with a custom AST, static
+          analysis, and a RISC-V backend, plus formal program verification.</p>
+      </div>
+      <div class="skill-card">
+        <h3>Systems Programming</h3>
+        <p>Low-level engine and systems work in C and RISC-V — manual memory
+          management, file I/O, and performance-focused design.</p>
+      </div>
+      <div class="skill-card">
+        <h3>Machine Learning & Data Analysis</h3>
+        <p>Applied ML with scikit-learn and pandas, including a Random Forest
+          model achieving ~80% accuracy.</p>
+      </div>
+      <div class="skill-card">
+        <h3>Algorithms & OOP Design</h3>
+        <p>Strong foundation in data structures, recursion, and clean
+          object-oriented architecture (MVC, encapsulation, defensive
+          programming).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education Timeline -->
+  <section id="education">
+    <h2>Education</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-date">Oct 2024 – Present</span>
+        <h3>B.Sc. Computer Science</h3>
+        <p class="timeline-org"><img src="assests/images/saarland-university-logo.webp" alt="Saarland University" class="org-logo" />Saarland University</p>
+        <p>Coursework: Data Structures & Algorithms, Software Engineering,
+          Object-Oriented Programming, Machine Learning & Data Analysis,
+          System Architecture, Statistics, Linear Algebra, Functional
+          Programming.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Timeline -->
+  <section id="experience">
+    <p class="section-label">Professional Journey</p>
+    <h2>Experience</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-date">Apr 2026 – Sep 2026</span>
+        <h3>Teaching Assistant — Statistics for Data Science & AI</h3>
+        <p class="timeline-org"><img src="assests/images/saarland-university-logo.webp" alt="Saarland University" class="org-logo" />Saarland University</p>
+        <ul class="timeline-list">
+          <li>Led weekly tutorial sessions and designed course materials and assessments for a Statistics for Data Science & AI course.</li>
+          <li>Evaluated the response quality of an in-house LLM chatbot (ALA project) by systematically auditing its outputs against course material and expected reasoning.</li>
+          <li>Built structured test prompts to surface hallucinations, factual errors, and inconsistent reasoning, then logged and categorized recurring failure patterns for the development team.</li>
+          <li>Fed evaluation findings back into the model's iteration cycle, helping tighten alignment between the chatbot's responses and the actual course content.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <p class="section-label">Portfolio</p>
+    <h2>Projects.</h2>
+    <div class="project-grid">
+
+      <div class="project-card featured" id="project-tinyc">
+        <span class="project-index">01</span>
+        <h3>TinyC Compiler & Verification System</h3>
+        <p>A multi-pass C compiler in Java for a subset of C — custom AST,
+          multi-phase static analysis, a RISC-V backend, and automated
+          formal verification of program correctness.</p>
+        <div class="tags">
+          <span>Java</span><span>RISC-V</span><span>Static Analysis</span><span>JUnit</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/TinyC-Compiler" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-uttt">
+        <span class="project-index">02</span>
+        <h3>Ultimate Tic-Tac-Toe Engine</h3>
+        <p>A 2-tier nested board game engine with a dynamic rule/constraint
+          system, recursive win evaluation, and clean MVC architecture.</p>
+        <div class="tags">
+          <span>Java</span><span>OOP</span><span>MVC</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/UTTT" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-raycast">
+        <span class="project-index">03</span>
+        <h3>RayCast</h3>
+        <p>A 2.5D rendering engine written in pure C from scratch — real-time
+          raycasting, custom texture mapping, and a hand-built map parser.</p>
+        <div class="tags">
+          <span>C</span><span>Graphics</span><span>Systems Programming</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/RayCast-in-C" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-2048">
+        <span class="project-index">04</span>
+        <h3>2048 Game</h3>
+        <p>Complete game logic implemented in RISC-V assembly, with a focus
+          on low-level memory management, correctness, and debugging.</p>
+        <div class="tags">
+          <span>RISC-V</span><span>Low-level Programming</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/2048" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-wordle">
+        <span class="project-index">05</span>
+        <h3>Wordle (Trie-Based)</h3>
+        <p>A modular, terminal-based Wordle clone using a Trie data structure
+          for fast input validation and accurate feedback logic.</p>
+        <div class="tags">
+          <span>C</span><span>Trie</span><span>Algorithms</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/Woordle" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-titanic">
+        <span class="project-index">06</span>
+        <h3>Titanic Survival Prediction</h3>
+        <p>A Random Forest model predicting passenger survival (~79.89%
+          accuracy), with feature engineering and model tuning.</p>
+        <div class="tags">
+          <span>Python</span><span>scikit-learn</span><span>pandas</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/Titanic-Survival-Prediction" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <p class="section-label">Connect With Me</p>
+    <h2>Let's build something great.</h2>
+    <p>Interested in Werkstudent opportunities, collaborations, or discussing
+      any of my projects? I'd love to hear from you.</p>
+    <div class="contact-links">
+      <a href="mailto:aliharoon017@gmail.com">✉ Email</a>
+      <a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="contact-icon" />LinkedIn</a>
+      <a href="https://github.com/HaroonAli7816" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" class="contact-icon github-icon" />GitHub</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Muhammad Haroon Ali — Computer Science Student — Saarbrücken, Germany</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
