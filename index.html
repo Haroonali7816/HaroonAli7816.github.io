@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Muhammad Haroon Ali — Computer Science Student</title>
+<title>Muhammad Haroon Ali · Computer Science Student</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-  <!-- Custom Cursor -->
-  <div class="cursor-dot"></div>
-  <div class="cursor-ring"></div>
+  <!-- Ambient background: sparse drifting node graph + a faint grain layer -->
+  <canvas id="bg-graph" class="bg-graph" aria-hidden="true"></canvas>
+  <div class="bg-texture" aria-hidden="true"></div>
 
   <!-- Loading bar -->
   <div id="loader">
@@ -24,6 +24,7 @@
         <div class="loader-track"><div class="loader-fill" id="loader-fill"></div></div>
         <span id="loader-percent">0%</span>
       </div>
+      <p class="loader-log" id="loader-log" aria-hidden="true"></p>
     </div>
   </div>
 
@@ -44,21 +45,37 @@
     <div class="nav-actions">
       <button id="theme-toggle">🌙</button>
       <a href="assests/documents/resume.pdf" target="_blank" class="nav-resume">Resume</a>
+      <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu" class="mobile-menu">
+    <ul class="mobile-nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="assests/documents/resume.pdf" target="_blank">Resume</a></li>
+    </ul>
+  </div>
+
   <!-- Hero Section -->
   <header id="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
 
     <div class="hero-content">
       <div class="hero-text">
         <p class="eyebrow"><span class="eyebrow-dot"></span>Open to Werkstudent opportunities</p>
-        <h1>Endlessly curious about how <span class="highlight" id="rotating-word">systems</span> really work.</h1>
+        <h1>Endlessly curious about how <span class="highlight" id="rotating-word">language models</span> really work.</h1>
 
         <p class="hero-sub">
-          Computer Science student at Saarland University, driven by curiosity
-          for systems programming and compiler construction. I build things to
-          deeply understand them — bridging low-level systems with applied AI/ML.
+          Computer Science student at Saarland University, now focused on
+          building AI-backed data systems: RAG pipelines, LLM evaluation,
+          and automated data engineering. The same drive to understand
+          things from the ground up first took me through a C compiler
+          and a RISC-V backend.
         </p>
 
         <div class="hero-cta">
@@ -68,7 +85,7 @@
 
         <div class="hero-stats">
           <div class="stat">
-            <span class="stat-number" data-target="7">0</span>+
+            <span class="stat-number" data-target="8">0</span>+
             <p>Projects</p>
           </div>
           <div class="stat">
@@ -107,6 +124,8 @@
         <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg" alt="NumPy">NumPy</span>
         <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="SQL">SQL</span>
         <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="Linux">Linux</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-plain.svg" alt="FastAPI">FastAPI</span>
+        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-plain.svg" alt="Docker">Docker</span>
       </div>
     </div>
   </section>
@@ -116,49 +135,81 @@
     <p class="section-label">Who I Am</p>
     <h2>Computer Science Student.</h2>
     <p class="about-text">
-      Hi, I'm <strong>Muhammad Haroon Ali</strong> — a Computer Science
+      Hi, I'm <strong>Muhammad Haroon Ali</strong>, a Computer Science
       student at <strong>Saarland University</strong> who learns best by
       building. Give me an interesting problem and I'll take it apart,
       rebuild it from scratch, and figure out exactly how it works.
     </p>
     <p class="about-text">
-      That curiosity has taken me from writing a C compiler with my own
-      RISC-V backend, to building a 2.5D graphics engine from raw pixels, to
-      training ML models on real datasets. I pick things up fast, I'm
-      comfortable being thrown into the deep end, and I genuinely enjoy the
-      process of debugging something at 2am until it finally clicks.
+      Lately that's meant building AI-backed systems end-to-end: a FastAPI
+      service that classifies and triages issues with an LLM, backed by a
+      retrieval layer built from scratch and an evaluation harness that
+      actually measures whether it works instead of assuming it does.
+      Before that it was a C compiler with a hand-built RISC-V backend and
+      a 2.5D graphics engine written with zero external libraries. Same
+      instinct to open things up and see how they work, just aimed at a
+      different layer of the stack now.
     </p>
     <p class="about-text">
       Outside of code, I care about clear communication and working well
-      with a team — skills I sharpened as a teaching assistant, breaking
-      down hard concepts for others. Based in
+      with a team, both sharpened as a teaching assistant breaking down
+      hard concepts for others. Based in
       <strong>Saarbrücken, Germany</strong>, and actively looking for a
       Werkstudent role where I can learn from experienced engineers and
       ship real things.
     </p>
+  </section>
 
-    <div class="skill-cards">
-      <div class="skill-card">
-        <h3>Compiler Construction</h3>
-        <p>Built a multi-pass C compiler in Java with a custom AST, static
-          analysis, and a RISC-V backend, plus formal program verification.</p>
+  <!-- Skills Panels -->
+  <section id="skills-panel">
+    <p class="section-label">Skills</p>
+    <h2>What I build with.</h2>
+    <div class="skills-panels">
+
+      <div class="code-panel">
+        <div class="code-panel-bar">
+          <span class="code-dot code-dot-red"></span>
+          <span class="code-dot code-dot-yellow"></span>
+          <span class="code-dot code-dot-green"></span>
+          <span class="code-panel-filename">skills.py</span>
+        </div>
+        <pre class="code-panel-body"><code><span class="tok-kw">class</span> <span class="tok-class">Haroon</span>:
+    <span class="tok-comment"># what I actually build with</span>
+    languages   = [<span class="tok-str">"Java"</span>, <span class="tok-str">"C"</span>, <span class="tok-str">"C++"</span>, <span class="tok-str">"Python"</span>, <span class="tok-str">"OCaml"</span>, <span class="tok-str">"SQL"</span>, <span class="tok-str">"RISC-V ASM"</span>]
+    ai_ml       = [<span class="tok-str">"LangChain"</span>, <span class="tok-str">"scikit-learn"</span>, <span class="tok-str">"pandas"</span>, <span class="tok-str">"NumPy"</span>, <span class="tok-str">"sentence-transformers"</span>]
+    data_eng    = [<span class="tok-str">"FastAPI"</span>, <span class="tok-str">"SQLAlchemy"</span>, <span class="tok-str">"ChromaDB"</span>, <span class="tok-str">"n8n"</span>, <span class="tok-str">"REST APIs"</span>]
+    bi          = [<span class="tok-str">"Power BI"</span>, <span class="tok-str">"DAX"</span>, <span class="tok-str">"matplotlib"</span>]
+    tools       = [<span class="tok-str">"Git"</span>, <span class="tok-str">"Docker"</span>, <span class="tok-str">"Linux"</span>, <span class="tok-str">"JUnit"</span>, <span class="tok-str">"MVC"</span>]
+
+    <span class="tok-comment"># what actually connects all of it</span>
+    core_expertise = [<span class="tok-str">"Systems Programming"</span>, <span class="tok-str">"Compiler Design"</span>, <span class="tok-str">"LLM Evaluation"</span>, <span class="tok-str">"Data Engineering"</span>]
+
+    <span class="tok-kw">def</span> <span class="tok-func">currently_building</span>(<span class="tok-kw">self</span>):
+        <span class="tok-kw">return</span> <span class="tok-str">"AI-backed data systems"</span><span class="code-cursor">_</span></code></pre>
       </div>
-      <div class="skill-card">
-        <h3>Systems Programming</h3>
-        <p>Low-level engine and systems work in C and RISC-V — manual memory
-          management, file I/O, and performance-focused design.</p>
+
+      <div class="stats-panel">
+        <div class="code-panel-bar">
+          <span class="code-dot code-dot-red"></span>
+          <span class="code-dot code-dot-yellow"></span>
+          <span class="code-dot code-dot-green"></span>
+          <span class="code-panel-filename">github --stats --live</span>
+        </div>
+        <div class="stats-panel-body" id="stats-panel-body">
+          <a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">
+            <img
+              src="https://github-readme-stats.vercel.app/api?username=HaroonAli7816&show_icons=true&hide_border=true&bg_color=00000000&title_color=e8a33d&text_color=9a9a9a&icon_color=e8a33d"
+              alt="Haroon Ali's live GitHub stats"
+              loading="lazy"
+              onerror="document.getElementById('stats-panel-body').classList.add('stats-fallback')"
+            />
+          </a>
+          <p class="stats-fallback-text">Live stats didn't load.
+            <a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">View GitHub profile ↗</a>
+          </p>
+        </div>
       </div>
-      <div class="skill-card">
-        <h3>Machine Learning & Data Analysis</h3>
-        <p>Applied ML with scikit-learn and pandas, including a Random Forest
-          model achieving ~80% accuracy.</p>
-      </div>
-      <div class="skill-card">
-        <h3>Algorithms & OOP Design</h3>
-        <p>Strong foundation in data structures, recursion, and clean
-          object-oriented architecture (MVC, encapsulation, defensive
-          programming).</p>
-      </div>
+
     </div>
   </section>
 
@@ -185,7 +236,7 @@
     <div class="timeline">
       <div class="timeline-item">
         <span class="timeline-date">Apr 2026 – Sep 2026</span>
-        <h3>Teaching Assistant — Statistics for Data Science & AI</h3>
+        <h3>Teaching Assistant: Statistics for Data Science & AI</h3>
         <p class="timeline-org"><img src="assests/images/saarland-university-logo.webp" alt="Saarland University" class="org-logo" />Saarland University</p>
         <ul class="timeline-list">
           <li>Led weekly tutorial sessions and designed course materials and assessments for a Statistics for Data Science & AI course.</li>
@@ -201,14 +252,47 @@
   <section id="projects">
     <p class="section-label">Portfolio</p>
     <h2>Projects.</h2>
-    <div class="project-grid">
+    <p class="projects-hint">scroll · drag · click a project</p>
+    <div class="project-scroll-wrap">
+    <div class="project-scroll" id="project-scroll">
 
-      <div class="project-card featured" id="project-tinyc">
+      <div class="project-card featured" id="project-triage">
         <span class="project-index">01</span>
+        <h3>Incident Triage Copilot</h3>
+        <p>An AI-assisted triage system with a FastAPI + SQLAlchemy REST API
+          at its core: Gemini classifies severity/category/summary, a local
+          RAG layer (sentence-transformers + ChromaDB) surfaces similar past
+          incidents, and n8n alerts the team on critical issues with tenacity-based
+          retry/backoff on every external call. Accuracy is tracked against a
+          40-issue hand-labeled evaluation harness rather than claimed blindly.</p>
+        <div class="tags">
+          <span>Python</span><span>FastAPI</span><span>LangChain</span><span>Gemini</span><span>ChromaDB</span><span>SQLAlchemy</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/incident-triage-copilot" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-energy">
+        <span class="project-index">02</span>
+        <h3>German Energy Market Analytics</h3>
+        <p>An end-to-end analytics pipeline ingesting ~11.6 years of hourly
+          SMARD electricity-market data (6,348 chunks, zero failed pulls) into
+          a dimensional star schema built with SQLAlchemy, backed by an
+          automated data-validation suite for coverage gaps and outliers. A
+          Power BI dashboard with 8+ DAX measures surfaces trends like
+          renewable share reaching 64% and negative-price hours rising 20x
+          since 2018.</p>
+        <div class="tags">
+          <span>Python</span><span>SQL</span><span>SQLAlchemy</span><span>Power BI</span><span>DAX</span><span>pandas</span>
+        </div>
+        <a href="https://github.com/Haroonali7816/german-energy-market-analytics" target="_blank" class="btn-outline">View Code ↗</a>
+      </div>
+
+      <div class="project-card" id="project-tinyc">
+        <span class="project-index">03</span>
         <h3>TinyC Compiler & Verification System</h3>
-        <p>A multi-pass C compiler in Java for a subset of C — custom AST,
-          multi-phase static analysis, a RISC-V backend, and automated
-          formal verification of program correctness.</p>
+        <p>A multi-pass C compiler in Java for a subset of C, with a
+          custom AST, multi-phase static analysis, a RISC-V backend, and
+          automated formal verification of program correctness.</p>
         <div class="tags">
           <span>Java</span><span>RISC-V</span><span>Static Analysis</span><span>JUnit</span>
         </div>
@@ -216,7 +300,7 @@
       </div>
 
       <div class="project-card" id="project-uttt">
-        <span class="project-index">02</span>
+        <span class="project-index">04</span>
         <h3>Ultimate Tic-Tac-Toe Engine</h3>
         <p>A 2-tier nested board game engine with a dynamic rule/constraint
           system, recursive win evaluation, and clean MVC architecture.</p>
@@ -227,10 +311,11 @@
       </div>
 
       <div class="project-card" id="project-raycast">
-        <span class="project-index">03</span>
+        <span class="project-index">05</span>
         <h3>RayCast</h3>
-        <p>A 2.5D rendering engine written in pure C from scratch — real-time
-          raycasting, custom texture mapping, and a hand-built map parser.</p>
+        <p>A 2.5D rendering engine written in pure C from scratch, with
+          real-time raycasting, custom texture mapping, and a hand-built
+          map parser.</p>
         <div class="tags">
           <span>C</span><span>Graphics</span><span>Systems Programming</span>
         </div>
@@ -238,7 +323,7 @@
       </div>
 
       <div class="project-card" id="project-2048">
-        <span class="project-index">04</span>
+        <span class="project-index">06</span>
         <h3>2048 Game</h3>
         <p>Complete game logic implemented in RISC-V assembly, with a focus
           on low-level memory management, correctness, and debugging.</p>
@@ -249,7 +334,7 @@
       </div>
 
       <div class="project-card" id="project-wordle">
-        <span class="project-index">05</span>
+        <span class="project-index">07</span>
         <h3>Wordle (Trie-Based)</h3>
         <p>A modular, terminal-based Wordle clone using a Trie data structure
           for fast input validation and accurate feedback logic.</p>
@@ -260,7 +345,7 @@
       </div>
 
       <div class="project-card" id="project-titanic">
-        <span class="project-index">06</span>
+        <span class="project-index">08</span>
         <h3>Titanic Survival Prediction</h3>
         <p>A Random Forest model predicting passenger survival (~79.89%
           accuracy), with feature engineering and model tuning.</p>
@@ -271,6 +356,8 @@
       </div>
 
     </div>
+    <div class="project-dots" id="project-dots"></div>
+    </div>
   </section>
 
   <!-- Contact -->
@@ -279,15 +366,24 @@
     <h2>Let's build something great.</h2>
     <p>Interested in Werkstudent opportunities, collaborations, or discussing
       any of my projects? I'd love to hear from you.</p>
-    <div class="contact-links">
-      <a href="mailto:aliharoon017@gmail.com">✉ Email</a>
-      <a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="contact-icon" />LinkedIn</a>
-      <a href="https://github.com/HaroonAli7816" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" class="contact-icon github-icon" />GitHub</a>
+    <div class="contact-directory">
+      <a href="mailto:aliharoon017@gmail.com" class="contact-entry">
+        <span class="contact-label">Email</span>
+        <span class="contact-value">aliharoon017@gmail.com</span>
+      </a>
+      <a href="https://github.com/HaroonAli7816" target="_blank" class="contact-entry">
+        <span class="contact-label">GitHub</span>
+        <span class="contact-value">github.com/HaroonAli7816</span>
+      </a>
+      <a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank" class="contact-entry">
+        <span class="contact-label">LinkedIn</span>
+        <span class="contact-value">in/muhammad-haroon-ali</span>
+      </a>
     </div>
   </section>
 
   <footer>
-    <p>© 2026 Muhammad Haroon Ali — Computer Science Student — Saarbrücken, Germany</p>
+    <p>© 2026 Muhammad Haroon Ali · Computer Science Student · Saarbrücken, Germany</p>
   </footer>
 
   <script src="js/main.js"></script>
