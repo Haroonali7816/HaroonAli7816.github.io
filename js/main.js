@@ -330,128 +330,12 @@ if (mobileMenuToggle && mobileMenu) {
 }
 
 /* ==========================================================================
-   14. PROJECTS — horizontal scroll/drag strip with dot pagination
-   ========================================================================== */
-(function initProjectScroll() {
-  const scroller = document.getElementById('project-scroll');
-  const dotsWrap = document.getElementById('project-dots');
-  if (!scroller || !dotsWrap) return;
-
-  const cards = Array.from(scroller.querySelectorAll('.project-card'));
-
-  // Clone the set once and append it, so scrolling past the last real card
-  // continues seamlessly into an identical-looking "01" instead of stopping.
-  const clones = cards.map((card) => {
-    const clone = card.cloneNode(true);
-    clone.removeAttribute('id');
-    clone.setAttribute('aria-hidden', 'true');
-    clone.setAttribute('tabindex', '-1');
-    clone.querySelectorAll('a, button').forEach((el) => el.setAttribute('tabindex', '-1'));
-    scroller.appendChild(clone);
-    return clone;
-  });
-
-  // Build one dot per project; click scrolls that card into view.
-  const dots = cards.map((card, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'project-dot';
-    dot.setAttribute('aria-label', `Go to project ${i + 1}`);
-    dot.addEventListener('click', () => {
-      card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-    });
-    dotsWrap.appendChild(dot);
-    return dot;
-  });
-  if (dots.length) dots[0].classList.add('active');
-
-  // Map both the real cards and their clones back to the same dot index.
-  const indexOfNode = new Map();
-  cards.forEach((c, i) => indexOfNode.set(c, i));
-  clones.forEach((c, i) => indexOfNode.set(c, i));
-
-  const activeObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const i = indexOfNode.get(entry.target);
-          if (i === undefined) return;
-          dots.forEach((d) => d.classList.remove('active'));
-          if (dots[i]) dots[i].classList.add('active');
-        }
-      });
-    },
-    { root: scroller, threshold: 0.6 }
-  );
-  cards.forEach((card) => activeObserver.observe(card));
-  clones.forEach((clone) => activeObserver.observe(clone));
-
-  // Once scrolling settles inside the cloned set, jump back by exactly one
-  // set-width — the clone sits pixel-for-pixel where the real card would,
-  // so the jump is invisible and scrolling just continues into "01".
-  let loopWidth = 0;
-  const computeLoopWidth = () => {
-    if (clones.length && cards.length) {
-      loopWidth = clones[0].getBoundingClientRect().left - cards[0].getBoundingClientRect().left;
-    }
-  };
-  computeLoopWidth();
-  window.addEventListener('resize', computeLoopWidth);
-
-  let scrollSettleTimer = null;
-  scroller.addEventListener('scroll', () => {
-    clearTimeout(scrollSettleTimer);
-    scrollSettleTimer = setTimeout(() => {
-      if (loopWidth > 0 && scroller.scrollLeft >= loopWidth - 2) {
-        scroller.scrollLeft -= loopWidth;
-      }
-    }, 120);
-  });
-
-  // Click-and-drag scrolling for desktop mice (touch/trackpad already
-  // scroll natively via overflow-x + scroll-snap).
-  let isDown = false;
-  let dragged = false;
-  let startX = 0;
-  let startScroll = 0;
-
-  scroller.addEventListener('mousedown', (e) => {
-    isDown = true;
-    dragged = false;
-    scroller.classList.add('dragging');
-    startX = e.pageX;
-    startScroll = scroller.scrollLeft;
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    const delta = e.pageX - startX;
-    if (Math.abs(delta) > 5) dragged = true;
-    scroller.scrollLeft = startScroll - delta;
-  });
-
-  window.addEventListener('mouseup', () => {
-    isDown = false;
-    scroller.classList.remove('dragging');
-  });
-
-  // Don't let a drag-release also fire the card's "View Code" link.
-  scroller.addEventListener(
-    'click',
-    (e) => {
-      if (dragged) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragged = false;
-      }
-    },
-    true
-  );
-})();
-
-/* ==========================================================================
-   15. AMBIENT BACKGROUND GRAPH — a sparse, slow-drifting node graph. Kept
-   deliberately minimal (few nodes, slow motion, one muted color) so it
-   reads as a quiet generative sketch rather than a dense particle template.
+   14. AMBIENT BACKGROUND — a sparse field of circuit-trace / syntax-tree
+   paths: each one a short Manhattan-routed line (like a PCB trace or an
+   AST branch) ending in a small pad, with a faint pulse of "signal"
+   travelling along it on a loop. Deliberately sparse and quiet (one muted
+   color, slow pulses) so it reads as a purposeful technical motif rather
+   than a decorative particle template.
    ========================================================================== */
 (function initBgGraph() {
   const canvas = document.getElementById('bg-graph');
@@ -459,81 +343,147 @@ if (mobileMenuToggle && mobileMenu) {
   const ctx = canvas.getContext('2d');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let w = 0, h = 0, nodes = [];
+  let w = 0, h = 0, traces = [];
   let rgb = [232, 163, 61]; // fallback amber, replaced below from the live theme
+  let isLight = false;
+  // Same numeric alpha reads far more intense on a light background than a
+  // dark one, so line/pad/pulse opacity is scaled down per theme.
+  let alphaScale = 1;
 
-  function readAccentColor() {
+  function readTheme() {
+    isLight = document.body.classList.contains('light');
+    alphaScale = isLight ? 0.8 : 1;
     const hex = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
     const m = hex.replace('#', '').match(/.{1,2}/g);
     if (m && m.length === 3) rgb = m.map((x) => parseInt(x, 16));
   }
-  readAccentColor();
+  readTheme();
 
   function resize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
   }
 
-  function seedNodes() {
-    const count = Math.max(26, Math.min(55, Math.round((w * h) / 32000)));
-    nodes = Array.from({ length: count }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.12,
-      vy: (Math.random() - 0.5) * 0.12,
-    }));
+  // Build one Manhattan-routed path (1-2 right-angle bends) starting near
+  // (x, y): a trunk segment, then a branch, mimicking a PCB trace or a
+  // branching AST edge rather than an arbitrary line. `dir` biases the
+  // horizontal direction (-1 or 1) so traces confined to a margin keep
+  // routing toward the viewport edge instead of drifting back over content.
+  function buildTrace(x, y, dir, maxLen) {
+    const points = [{ x, y }];
+    const bends = 1 + Math.round(Math.random());
+    let cx = x, cy = y;
+    let horizontal = true;
+    for (let i = 0; i < bends; i++) {
+      const len = Math.min(50 + Math.random() * 140, maxLen);
+      if (horizontal) cx += len * dir; else cy += len * (Math.random() < 0.5 ? -1 : 1);
+      points.push({ x: cx, y: cy });
+      horizontal = !horizontal;
+    }
+    const segLengths = [];
+    let total = 0;
+    for (let i = 1; i < points.length; i++) {
+      const d = Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+      segLengths.push(d);
+      total += d;
+    }
+    return {
+      points,
+      segLengths,
+      total,
+      duration: 4000 + Math.random() * 4000,
+      delay: Math.random() * 6000,
+    };
+  }
+
+  // Traces are confined to the empty margins outside the page's text column
+  // (--max-width) so they never run behind paragraphs or cards, at any
+  // scroll position — only decorate genuinely empty space either side.
+  function seedTraces() {
+    const maxContentWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--max-width')) || 1100;
+    const margin = (w - maxContentWidth) / 2 - 16; // leave a small gap from the content edge too
+    traces = [];
+    if (margin < 30) return; // only truly narrow/mobile viewports have no safe margin at all
+
+    // Segment length scales with the available margin (via buildTrace's
+    // maxLen clamp) so this still looks right on a merely-tight margin,
+    // not just a generous one — no hard cliff at common laptop widths.
+    const zones = [
+      { from: 0, to: margin, dir: -1 },
+      { from: w - margin, to: w, dir: 1 },
+    ];
+    const perZone = Math.max(7, Math.min(18, Math.round((h * margin) / 26000)));
+    zones.forEach((zone) => {
+      for (let i = 0; i < perZone; i++) {
+        const x = zone.dir === -1 ? zone.to - Math.random() * margin * 0.85 : zone.from + Math.random() * margin * 0.85;
+        const y = Math.random() * h;
+        traces.push(buildTrace(x, y, zone.dir, margin * 0.9));
+      }
+    });
   }
 
   resize();
-  seedNodes();
-  window.addEventListener('resize', () => { resize(); seedNodes(); });
+  seedTraces();
+  window.addEventListener('resize', () => { resize(); seedTraces(); });
 
-  // Re-read the accent when the theme is toggled (amber in dark, bronze in light).
+  // Re-read the theme when it's toggled (amber in dark, bronze in light).
   const themeBtn = document.getElementById('theme-toggle');
-  if (themeBtn) themeBtn.addEventListener('click', () => setTimeout(readAccentColor, 0));
+  if (themeBtn) themeBtn.addEventListener('click', () => setTimeout(readTheme, 0));
 
-  const LINK_DIST = 150;
+  // Position of the traveling "signal" pulse at fraction t (0-1) along a trace.
+  function pointAt(trace, t) {
+    let dist = t * trace.total;
+    for (let i = 0; i < trace.segLengths.length; i++) {
+      const segLen = trace.segLengths[i];
+      if (dist <= segLen || i === trace.segLengths.length - 1) {
+        const p0 = trace.points[i];
+        const p1 = trace.points[i + 1];
+        const f = segLen > 0 ? Math.min(dist / segLen, 1) : 0;
+        return { x: p0.x + (p1.x - p0.x) * f, y: p0.y + (p1.y - p0.y) * f };
+      }
+      dist -= segLen;
+    }
+    return trace.points[trace.points.length - 1];
+  }
 
-  function drawFrame() {
+  function drawFrame(now) {
     ctx.clearRect(0, 0, w, h);
     const [cr, cg, cb] = rgb;
 
-    nodes.forEach((n) => {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x <= 0 || n.x >= w) n.vx *= -1;
-      if (n.y <= 0 || n.y >= h) n.vy *= -1;
-    });
-
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < LINK_DIST) {
-          const alpha = (1 - dist / LINK_DIST) * 0.2;
-          ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x, nodes[i].y);
-          ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.stroke();
-        }
-      }
-    }
-
-    ctx.shadowBlur = 6;
-    ctx.shadowColor = `rgba(${cr}, ${cg}, ${cb}, 0.9)`;
-    nodes.forEach((n) => {
+    traces.forEach((trace) => {
+      // The static trace path.
+      ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.32 * alphaScale})`;
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.arc(n.x, n.y, 1.8, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, 0.7)`;
-      ctx.fill();
+      ctx.moveTo(trace.points[0].x, trace.points[0].y);
+      for (let i = 1; i < trace.points.length; i++) ctx.lineTo(trace.points[i].x, trace.points[i].y);
+      ctx.stroke();
+
+      // A small pad at each end, like a solder pad / AST leaf node.
+      ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.55 * alphaScale})`;
+      [trace.points[0], trace.points[trace.points.length - 1]].forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      if (!prefersReducedMotion) {
+        // A faint pulse travels the trace on a loop, reading as a signal
+        // moving through a circuit rather than a randomly drifting particle.
+        const t = ((now + trace.delay) % trace.duration) / trace.duration;
+        const p = pointAt(trace, t);
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `rgba(${cr}, ${cg}, ${cb}, ${0.9 * alphaScale})`;
+        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.85 * alphaScale})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
     });
-    ctx.shadowBlur = 0;
 
     if (!prefersReducedMotion) requestAnimationFrame(drawFrame);
   }
 
-  drawFrame();
+  drawFrame(0);
 })();

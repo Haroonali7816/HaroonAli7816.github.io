@@ -2,13 +2,13 @@
    1. CSS VARIABLES / THEME
    ========================================================================== */
 :root {
-  --bg: #05070d;
-  --bg-alt: #080b16;
-  --card-bg: #0a0e1c;
-  --bg-gradient: linear-gradient(160deg, #05070d 0%, #0a0e1c 55%, #131b33 100%);
-  --text: #f2f2f2;
-  --text-muted: #9a9fa8;
-  --border: #141b30;
+  --bg: #0d0d10;
+  --bg-alt: #121215;
+  --card-bg: #17171c;
+  --bg-gradient: linear-gradient(160deg, #0d0d10 0%, #121215 50%, #17171c 100%);
+  --text: #f0f0f2;
+  --text-muted: #9999a3;
+  --border: #24242b;
   --accent: #e8a33d;
   --accent-hover: #f4bd6a;
   --on-accent: #171006;
@@ -59,7 +59,7 @@ img { max-width: 100%; display: block; }
 section {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 100px 24px;
+  padding: 88px 24px;
 }
 
 .section-label {
@@ -75,6 +75,53 @@ section {
 section h2 {
   font-size: 2.4rem;
   margin-bottom: 32px;
+}
+
+/* A short accent-colored thread across the top of each section — a small,
+   repeated motif so sections read as one continuous piece instead of
+   independent, disconnected blocks. */
+#about::before,
+#skills-panel::before,
+#education::before,
+#experience::before,
+#projects::before,
+#contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 55%, transparent), transparent);
+}
+
+/* Faint alternating warm glows behind each section header, so the page
+   has ambient depth instead of flat, identical black between sections. */
+#about,
+#education,
+#experience {
+  background-image: radial-gradient(ellipse 640px 380px at 10% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%);
+}
+
+#skills-panel,
+#projects,
+#contact {
+  background-image: radial-gradient(ellipse 640px 380px at 90% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%);
+}
+
+/* Same reasoning as .hero-glow: toned down from the dark-theme strength
+   (which read as a visible tinted smudge on cream), but still present. */
+body.light #about,
+body.light #education,
+body.light #experience {
+  background-image: radial-gradient(ellipse 640px 380px at 10% 0%, color-mix(in srgb, var(--accent) 3.5%, transparent), transparent 70%);
+}
+
+body.light #skills-panel,
+body.light #projects,
+body.light #contact {
+  background-image: radial-gradient(ellipse 640px 380px at 90% 0%, color-mix(in srgb, var(--accent) 3.5%, transparent), transparent 70%);
 }
 
 /* ==========================================================================
@@ -200,13 +247,13 @@ section h2 {
   justify-content: flex-end;
   gap: 40px;
   padding: 18px 40px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(8, 8, 10, 0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
 
 body.light #navbar {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(253, 251, 247, 0.75);
 }
 
 .nav-logo {
@@ -517,19 +564,22 @@ body.light #navbar {
 }
 
 .hero-photo {
-  width: 300px;
-  height: 300px;
+  width: 280px;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  border-radius: 32%;
-  border: none;
-  box-shadow: inset 0 0 55px 28px var(--bg);
+  object-position: top center;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+body.light .hero-photo {
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 @media (max-width: 900px) {
   .hero-photo {
     width: 220px;
-    height: 220px;
-    box-shadow: inset 0 0 40px 20px var(--bg);
   }
 }
 
@@ -625,12 +675,11 @@ body.light #navbar {
   height: 22px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: grayscale(1) opacity(0.65);
-  transition: filter 0.25s ease;
+  transition: transform 0.25s ease;
 }
 
 .skill-item:hover img {
-  filter: grayscale(0) opacity(1);
+  transform: scale(1.12);
 }
 
 /* ==========================================================================
@@ -665,6 +714,19 @@ body.light #navbar {
   border-radius: 50%;
   background: var(--accent);
   border: 3px solid var(--bg);
+  transition: box-shadow 0.25s ease;
+}
+
+.timeline-item:hover::before {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.timeline-item h3 {
+  transition: color 0.2s ease;
+}
+
+.timeline-item:hover h3 {
+  color: var(--accent);
 }
 
 .timeline-date {
@@ -728,75 +790,49 @@ body.light #navbar {
   margin-bottom: 28px;
 }
 
-.project-scroll-wrap {
-  position: relative;
+/* Bento grid: the featured project anchors a large tile, project 02 takes
+   a wide tile, and the rest fill in as even 1x1 tiles — everything visible
+   at once, no scrolling or dragging required. */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(220px, auto);
+  gap: 20px;
 }
 
-.project-scroll {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 4px 4px 16px;
-  margin: -4px -4px 0;
-  cursor: grab;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.project-card.featured,
+.project-card:nth-child(2) {
+  grid-column: span 2;
 }
 
-.project-scroll::-webkit-scrollbar { display: none; }
-
-.project-scroll.dragging { cursor: grabbing; scroll-snap-type: none; }
-
-.project-scroll:hover .project-card:not(:hover) {
-  opacity: 0.6;
-  filter: blur(0.5px);
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-.project-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.project-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--border);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: width 0.2s ease, background 0.2s ease;
-}
-
-.project-dot.active {
-  width: 20px;
-  background: var(--accent);
+@media (max-width: 600px) {
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-card.featured,
+  .project-card:nth-child(2) {
+    grid-column: span 1;
+  }
 }
 
 .project-card {
-  flex: 0 0 min(320px, 82vw);
-  scroll-snap-align: start;
-  background: linear-gradient(160deg, var(--card-bg) 0%, #17203d 100%);
+  background: linear-gradient(160deg, var(--card-bg) 0%, color-mix(in srgb, var(--accent) 6%, #1c1c22) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 28px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease,
-    opacity 0.15s ease, filter 0.15s ease;
-  cursor: default;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .project-card:hover {
-  transform: translateY(-10px) scale(1.04);
+  transform: translateY(-6px);
   border-color: var(--accent);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 25px 50px rgba(0, 0, 0, 0.45);
   z-index: 2;
-  opacity: 1 !important;
-  filter: blur(0) !important;
 }
 
 body.light .project-card:hover {
@@ -811,12 +847,37 @@ body.light .project-card {
   border-color: var(--accent);
 }
 
+.project-card.featured h3 {
+  font-size: 1.6rem;
+}
+
+.project-card.featured p {
+  font-size: 1rem;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
 .project-index {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 0.85rem;
   margin-bottom: 8px;
+}
+
+.featured-badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--on-accent);
+  background: var(--accent);
+  padding: 3px 10px;
+  border-radius: 999px;
 }
 
 .project-card h3 {
@@ -828,13 +889,28 @@ body.light .project-card {
   color: var(--text-muted);
   font-size: 0.92rem;
   margin-bottom: 16px;
-  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.project-card:nth-child(2) p {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.project-card:hover p {
+  -webkit-line-clamp: 20;
+  line-clamp: 20;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: auto;
   margin-bottom: 18px;
 }
 
@@ -870,7 +946,15 @@ body.light .project-card {
   display: flex;
   flex-direction: column;
   max-width: 460px;
-  border-top: 1px solid var(--border);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+body.light .contact-directory {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 16px 32px rgba(0, 0, 0, 0.08);
 }
 
 .contact-entry {
@@ -880,11 +964,16 @@ body.light .project-card {
   gap: 16px;
   padding: 18px 4px;
   border-bottom: 1px solid var(--border);
-  transition: padding-left 0.2s ease;
+  transition: padding-left 0.2s ease, background 0.2s ease;
+}
+
+.contact-directory .contact-entry:last-child {
+  border-bottom: none;
 }
 
 .contact-entry:hover {
   padding-left: 10px;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
 }
 
 .contact-label {
@@ -1078,6 +1167,13 @@ section, footer {
   animation: glow-breathe 9s ease-in-out infinite;
 }
 
+body.light .hero-glow {
+  /* The same mix reads as a heavier tinted blob on a light background, so
+     it's toned down from the dark theme's value — but kept present, not
+     removed, since it's a deliberate warm touch behind the hero photo. */
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent) 0%, transparent 70%);
+}
+
 @keyframes glow-breathe {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.08); }
@@ -1111,6 +1207,25 @@ section, footer {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 20px 45px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.code-panel:hover,
+.stats-panel:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 28px 55px rgba(0, 0, 0, 0.4);
+}
+
+body.light .code-panel,
+body.light .stats-panel {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+
+body.light .code-panel:hover,
+body.light .stats-panel:hover {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .code-panel-bar {
