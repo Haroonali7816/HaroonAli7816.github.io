@@ -92,13 +92,14 @@ ul, ol { padding: 0; list-style: none; }
 /* ---------- Rail ---------- */
 .rail {
   align-self: start;
-  padding-block: 48px 32px;
+  will-change: transform;
+  padding-block: 40px 28px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 26px;
 }
 
-.rail-top { display: flex; flex-direction: column; gap: 14px; }
+.rail-top { display: flex; flex-direction: column; gap: 12px; }
 
 .portrait-wrap {
   width: 184px;
@@ -177,10 +178,11 @@ ul, ol { padding: 0; list-style: none; }
 
 .rail-bottom {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 10px;
 }
+.rail-links { flex-basis: 100%; order: -1; }
 .rail-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .rail-links a {
   font-size: 0.9375rem;
@@ -516,7 +518,8 @@ ul, ol { padding: 0; list-style: none; }
   .status { grid-column: 1 / -1; margin-top: 10px; }
   .rail-nav { flex-direction: row; flex-wrap: wrap; gap: 4px 14px; }
   .rail-nav a::before { display: none; }
-  .rail-bottom { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
+  .rail-bottom { gap: 14px 20px; }
+  .rail-links { flex-basis: auto; }
   .main { padding-top: 16px; }
   .block:first-child { padding-top: 32px; border-top: 1px solid var(--line); }
 }

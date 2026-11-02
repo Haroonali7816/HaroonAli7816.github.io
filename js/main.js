@@ -354,3 +354,43 @@ if ('IntersectionObserver' in window && !reduceMotion) {
     }
   });
 })();
+
+/* ---------- Side column drifts down with the page ----------
+   On wide screens the rail moves down in proportion to scroll progress:
+   at the top of the page it sits at the top, and its bottom reaches the
+   bottom of the content exactly when the page reaches its end. */
+(function () {
+  const rail = document.querySelector('.rail');
+  const main = document.querySelector('.main');
+  if (!rail || !main) return;
+  const wide = window.matchMedia('(min-width: 1001px)');
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = 0;
+  let ticking = false;
+
+  function target() {
+    if (!wide.matches) return 0;
+    const range = document.documentElement.scrollHeight - window.innerHeight;
+    const travel = Math.max(0, main.offsetHeight - rail.offsetHeight);
+    const progress = range > 0 ? Math.min(1, Math.max(0, window.scrollY / range)) : 0;
+    return progress * travel;
+  }
+
+  function frame() {
+    const goal = target();
+    current = smooth ? current + (goal - current) * 0.18 : goal;
+    if (Math.abs(goal - current) < 0.5) current = goal;
+    rail.style.transform = current ? `translate3d(0, ${current.toFixed(1)}px, 0)` : '';
+    if (current !== goal) requestAnimationFrame(frame);
+    else ticking = false;
+  }
+
+  function request() {
+    if (!ticking) { ticking = true; requestAnimationFrame(frame); }
+  }
+
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  if ('ResizeObserver' in window) new ResizeObserver(request).observe(main);
+  request();
+})();
