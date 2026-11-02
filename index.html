@@ -2,387 +2,428 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Muhammad Haroon Ali · Computer Science Student</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Muhammad Haroon Ali</title>
+<meta name="description" content="Computer Science student at Saarland University building AI agents, RAG pipelines and LLM evaluations whose outputs are checked before they are trusted." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css" />
+<script>
+  // Apply a saved theme before first paint so the page never flashes.
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
 </head>
 <body>
 
-  <!-- Ambient background: sparse drifting node graph + a faint grain layer -->
-  <canvas id="bg-graph" class="bg-graph" aria-hidden="true"></canvas>
-  <div class="bg-texture" aria-hidden="true"></div>
+<a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Loading bar -->
-  <div id="loader">
-    <div class="loader-inner">
-      <p class="loader-name">Muhammad Haroon Ali</p>
-      <p class="loader-role">Computer Science &amp; AI Student<span class="loader-cursor">_</span></p>
-      <div class="loader-progress-row">
-        <div class="loader-track"><div class="loader-fill" id="loader-fill"></div></div>
-        <span id="loader-percent">0%</span>
+<div class="shell">
+
+  <!-- Left rail: identity, status, navigation. Sticky on wide screens. -->
+  <aside class="rail">
+    <div class="rail-top">
+      <div class="portrait-wrap">
+        <img src="assests/images/profile-560.jpg" alt="Portrait of Muhammad Haroon Ali" class="portrait" width="560" height="747" />
       </div>
-      <p class="loader-log" id="loader-log" aria-hidden="true"></p>
+      <h1 class="name">Muhammad<br />Haroon Ali</h1>
+      <p class="role">Computer Science student, Saarland University</p>
+      <p class="status"><span class="status-dot" aria-hidden="true"></span>Incoming intern at Sereact, Dec 2026</p>
     </div>
-  </div>
 
-  <!-- Navigation -->
-  <nav id="navbar">
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div class="nav-search" id="nav-search">
-      <button id="search-toggle" class="search-toggle" aria-label="Search this page">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <nav class="rail-nav" aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="rail-bottom">
+      <button id="palette-open" class="palette-trigger" type="button" aria-haspopup="dialog">
+        <span>Jump to anything</span>
+        <kbd>/</kbd>
       </button>
-      <input type="text" id="site-search" class="nav-search-input" placeholder="Search..." autocomplete="off" />
-      <div id="search-results" class="search-results"></div>
-    </div>
-    <div class="nav-actions">
-      <button id="theme-toggle">🌙</button>
-      <a href="assests/documents/resume.pdf" target="_blank" class="nav-resume">Resume</a>
-      <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
+      <ul class="rail-links">
+        <li><a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="assests/documents/resume.pdf" target="_blank" rel="noopener">Résumé</a></li>
+      </ul>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colour theme">
+        <span class="theme-toggle-label">Theme</span>
+        <span class="theme-toggle-value" id="theme-value">System</span>
       </button>
     </div>
-  </nav>
+  </aside>
 
-  <!-- Mobile Menu Drawer -->
-  <div id="mobile-menu" class="mobile-menu">
-    <ul class="mobile-nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="assests/documents/resume.pdf" target="_blank">Resume</a></li>
-    </ul>
-  </div>
+  <main id="main" class="main">
 
-  <!-- Hero Section -->
-  <header id="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
+    <!-- About -->
+    <section id="about" class="block block-about">
+      <p class="thesis" aria-label="I build AI systems that check their own answers before anyone trusts them.">
+        <span class="thesis-line">I build AI systems that</span>
+        <span class="thesis-line">check their own answers</span>
+        <span class="thesis-line">before anyone trusts them.</span>
+      </p>
+      <div class="prose">
+        <p>I'm a Computer Science student at Saarland University working on AI agents, retrieval-augmented generation and LLM evaluation in Python. In everything I build, a model's output passes a schema, rule-based code or a person before it counts.</p>
+        <p>That habit comes from lower in the stack. Before LLMs I wrote a C compiler with a RISC-V backend and a verification layer that proves programs correct, and I still approach models the same way: measure where they fail instead of assuming they work.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Based in</dt><dd>Saarbrücken, open to relocation</dd></div>
+        <div><dt>Languages</dt><dd>English C1 · German A2</dd></div>
+        <div><dt>Focus</dt><dd>Agents, RAG, LLM evaluation</dd></div>
+      </dl>
+    </section>
 
-    <div class="hero-content">
-      <div class="hero-text">
-        <p class="eyebrow"><span class="eyebrow-dot"></span>Open to Werkstudent opportunities</p>
-        <h1>Endlessly curious about how <span class="highlight" id="rotating-word">language models</span> really work.</h1>
+    <!-- Experience -->
+    <section id="experience" class="block">
+      <h2 class="block-title">Experience</h2>
 
-        <p class="hero-sub">
-          Computer Science student at Saarland University, now focused on
-          building AI-backed data systems: RAG pipelines, LLM evaluation,
-          and automated data engineering. The same drive to understand
-          things from the ground up first took me through a C compiler
-          and a RISC-V backend.
-        </p>
-
-        <div class="hero-cta">
-          <a href="#projects" class="btn-primary">View My Work ↗</a>
-          <a href="#about" class="btn-outline">Learn More</a>
-        </div>
-
-        <div class="hero-stats">
-          <div class="stat">
-            <span class="stat-number" data-target="8">0</span>+
-            <p>Projects</p>
+      <ol class="entries">
+        <li class="entry" id="experience-sereact">
+          <p class="entry-when">Dec 2026 – May 2027</p>
+          <div class="entry-body">
+            <h3 class="entry-title">
+              <img src="assests/images/sereact-logo.svg" alt="" class="org-logo" />
+              <span>Intern · Sereact</span>
+              <span class="pill">Incoming</span>
+            </h3>
+            <p>Stuttgart-based Physical AI company building Cortex, a vision-language-action model that runs warehouse picking robots in live production.</p>
           </div>
-          <div class="stat">
-            <span class="stat-number" data-target="2">0</span>
-            <p>Years at University</p>
+        </li>
+
+        <li class="entry">
+          <p class="entry-when">Apr 2026 – Sep 2026</p>
+          <div class="entry-body">
+            <h3 class="entry-title">
+              <img src="assests/images/saarland-university-logo.webp" alt="" class="org-logo" />
+              <span>Teaching Assistant · Saarland University</span>
+            </h3>
+            <p class="entry-sub">Statistics for Data Science &amp; AI</p>
+            <ul class="entry-list">
+              <li>Ran weekly tutorials and helped design course materials, assignments and exams.</li>
+              <li>Tested the university's in-house LLM chatbot against course material, logging recurring failure patterns such as hallucinations and inconsistent reasoning.</li>
+              <li>Fed those findings back into the chatbot's next iteration.</li>
+            </ul>
           </div>
-          <div class="stat">
-            <span class="stat-number" data-target="8">0</span>+
-            <p>Technical Skills</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Education -->
+    <section id="education" class="block">
+      <h2 class="block-title">Education</h2>
+
+      <ol class="entries">
+        <li class="entry" id="education-saarland">
+          <p class="entry-when">Oct 2024 – Present</p>
+          <div class="entry-body">
+            <h3 class="entry-title">
+              <img src="assests/images/saarland-university-logo.webp" alt="" class="org-logo" />
+              <span>B.Sc. Computer Science · Saarland University</span>
+            </h3>
+            <p class="entry-sub">Saarbrücken, Germany</p>
+            <ul class="subjects" aria-label="Core modules">
+              <li>Programming</li>
+              <li>Data Structures &amp; Algorithms</li>
+              <li>Machine Learning</li>
+              <li>Linear Algebra</li>
+              <li>System Architecture</li>
+              <li>Software Engineering</li>
+              <li>Statistics</li>
+            </ul>
           </div>
-        </div>
-        <p class="scroll-hint">Scroll to explore ↓</p>
+        </li>
+
+        <li class="entry" id="education-cambridge">
+          <p class="entry-when">Apr 2018 – Aug 2023</p>
+          <div class="entry-body">
+            <h3 class="entry-title">
+              <img src="assests/images/cambridge-logo.png" alt="" class="org-logo" />
+              <span>O Levels &amp; A Levels · Cambridge International</span>
+            </h3>
+            <p class="entry-sub">Science group</p>
+            <ul class="subjects" aria-label="Major subjects">
+              <li>Physics</li>
+              <li>Chemistry</li>
+              <li>Mathematics</li>
+              <li>Biology</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="block">
+      <h2 class="block-title">Projects</h2>
+      <p class="block-note">Each project lists how its output gets checked. Run the checks, or open the details.</p>
+
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">All <span class="filter-count"></span></button>
+        <button type="button" class="filter" data-filter="ai" aria-pressed="false">AI &amp; ML <span class="filter-count"></span></button>
+        <button type="button" class="filter" data-filter="data" aria-pressed="false">Data <span class="filter-count"></span></button>
+        <button type="button" class="filter" data-filter="systems" aria-pressed="false">Systems <span class="filter-count"></span></button>
       </div>
 
-      <div class="hero-photo-wrap">
-        <img src="assests/images/profile.jpg" alt="Muhammad Haroon Ali" class="hero-photo" />
-      </div>
-    </div>
-  </header>
+      <div class="projects">
 
-  <!-- Skills Marquee -->
-  <section id="marquee-section">
-    <div class="marquee">
-      <div class="marquee-track">
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" alt="Java">Java</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg" alt="C">C</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" alt="C++">C++</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python">Python</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ocaml/ocaml-original.svg" alt="OCaml">OCaml</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" alt="HTML">HTML</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" alt="CSS">CSS</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript">JavaScript</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" alt="Git">Git/GitHub</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg" alt="scikit-learn">scikit-learn</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg" alt="pandas">pandas</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg" alt="NumPy">NumPy</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="SQL">SQL</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="Linux">Linux</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-plain.svg" alt="FastAPI">FastAPI</span>
-        <span class="skill-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-plain.svg" alt="Docker">Docker</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section id="about">
-    <p class="section-label">Who I Am</p>
-    <h2>Computer Science Student.</h2>
-    <p class="about-text">
-      Hi, I'm <strong>Muhammad Haroon Ali</strong>, a Computer Science
-      student at <strong>Saarland University</strong> who learns best by
-      building. Give me an interesting problem and I'll take it apart,
-      rebuild it from scratch, and figure out exactly how it works.
-    </p>
-    <p class="about-text">
-      Lately that's meant building AI-backed systems end-to-end: a FastAPI
-      service that classifies and triages issues with an LLM, backed by a
-      retrieval layer built from scratch and an evaluation harness that
-      actually measures whether it works instead of assuming it does.
-      Before that it was a C compiler with a hand-built RISC-V backend and
-      a 2.5D graphics engine written with zero external libraries. Same
-      instinct to open things up and see how they work, just aimed at a
-      different layer of the stack now.
-    </p>
-    <p class="about-text">
-      Outside of code, I care about clear communication and working well
-      with a team, both sharpened as a teaching assistant breaking down
-      hard concepts for others. Based in
-      <strong>Saarbrücken, Germany</strong>, and actively looking for a
-      Werkstudent role where I can learn from experienced engineers and
-      ship real things.
-    </p>
-  </section>
-
-  <!-- Skills Panels -->
-  <section id="skills-panel">
-    <p class="section-label">Skills</p>
-    <h2>What I build with.</h2>
-    <div class="skills-panels">
-
-      <div class="code-panel">
-        <div class="code-panel-bar">
-          <span class="code-dot code-dot-red"></span>
-          <span class="code-dot code-dot-yellow"></span>
-          <span class="code-dot code-dot-green"></span>
-          <span class="code-panel-filename">skills.py</span>
-        </div>
-        <pre class="code-panel-body"><code><span class="tok-kw">class</span> <span class="tok-class">Haroon</span>:
-    <span class="tok-comment"># what I actually build with</span>
-    languages   = [<span class="tok-str">"Java"</span>, <span class="tok-str">"C"</span>, <span class="tok-str">"C++"</span>, <span class="tok-str">"Python"</span>, <span class="tok-str">"OCaml"</span>, <span class="tok-str">"SQL"</span>, <span class="tok-str">"RISC-V ASM"</span>]
-    ai_ml       = [<span class="tok-str">"LangChain"</span>, <span class="tok-str">"scikit-learn"</span>, <span class="tok-str">"pandas"</span>, <span class="tok-str">"NumPy"</span>, <span class="tok-str">"sentence-transformers"</span>]
-    data_eng    = [<span class="tok-str">"FastAPI"</span>, <span class="tok-str">"SQLAlchemy"</span>, <span class="tok-str">"ChromaDB"</span>, <span class="tok-str">"n8n"</span>, <span class="tok-str">"REST APIs"</span>]
-    bi          = [<span class="tok-str">"Power BI"</span>, <span class="tok-str">"DAX"</span>, <span class="tok-str">"matplotlib"</span>]
-    tools       = [<span class="tok-str">"Git"</span>, <span class="tok-str">"Docker"</span>, <span class="tok-str">"Linux"</span>, <span class="tok-str">"JUnit"</span>, <span class="tok-str">"MVC"</span>]
-
-    <span class="tok-comment"># what actually connects all of it</span>
-    core_expertise = [<span class="tok-str">"Systems Programming"</span>, <span class="tok-str">"Compiler Design"</span>, <span class="tok-str">"LLM Evaluation"</span>, <span class="tok-str">"Data Engineering"</span>]
-
-    <span class="tok-kw">def</span> <span class="tok-func">currently_building</span>(<span class="tok-kw">self</span>):
-        <span class="tok-kw">return</span> <span class="tok-str">"AI-backed data systems"</span><span class="code-cursor">_</span></code></pre>
-      </div>
-
-      <div class="stats-panel">
-        <div class="code-panel-bar">
-          <span class="code-dot code-dot-red"></span>
-          <span class="code-dot code-dot-yellow"></span>
-          <span class="code-dot code-dot-green"></span>
-          <span class="code-panel-filename">github --stats --live</span>
-        </div>
-        <div class="stats-panel-body" id="stats-panel-body">
-          <a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">
-            <img
-              src="https://github-readme-stats.vercel.app/api?username=HaroonAli7816&show_icons=true&hide_border=true&bg_color=00000000&title_color=e8a33d&text_color=9a9a9a&icon_color=e8a33d"
-              alt="Haroon Ali's live GitHub stats"
-              loading="lazy"
-              onerror="document.getElementById('stats-panel-body').classList.add('stats-fallback')"
-            />
-          </a>
-          <p class="stats-fallback-text">Live stats didn't load.
-            <a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">View GitHub profile ↗</a>
+        <article class="project" id="project-bureaucracy" data-cat="ai">
+          <p class="project-kind">AI agent · 2026</p>
+          <h3 class="project-title">Bureaucracy Navigator</h3>
+          <p class="project-summary">Reads photos of official German letters, pulls out deadlines and required actions, and ranks open letters by urgency. Calendar reminders and formal German replies are only generated after a person approves.</p>
+          <div class="checks-block">
+            <ul class="checks" aria-label="How the output is checked">
+              <li>Pydantic schema on every answer</li>
+              <li>Second-pass self-check per field</li>
+              <li>Human approval gate in the backend</li>
+            </ul>
+            <div class="checks-run">
+              <button type="button" class="run-btn">Run checks</button>
+              <span class="run-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <p class="project-result">87.5% deadline accuracy on 16 hand-labeled letters</p>
+          <details class="project-details">
+            <summary>Details</summary>
+            <ul class="detail-list">
+              <li>Two-stage Gemini pipeline reads the letter image directly, with no OCR step.</li>
+              <li>Rule-based priority engine with zero model calls flags clashing deadlines, covered by 24 pytest tests.</li>
+              <li>Async Redis job queue cut upload waits from about 4 minutes to milliseconds.</li>
+              <li>10.5% false-confidence rate, with every failure written up in the repo.</li>
+            </ul>
+          </details>
+          <p class="stack">Python · FastAPI · Gemini · PostgreSQL · Redis · React · Docker</p>
+          <p class="project-links">
+            <a href="https://bureaucracy-navigator-gamma.vercel.app" target="_blank" rel="noopener">Live demo</a>
+            <a href="https://github.com/Haroonali7816/bureaucracy-navigator" target="_blank" rel="noopener">Code</a>
           </p>
-        </div>
+        </article>
+
+        <article class="project" id="project-triage" data-cat="ai">
+          <p class="project-kind">LLM + RAG</p>
+          <h3 class="project-title">Incident Triage Copilot</h3>
+          <p class="project-summary">Assigns severity, category and a summary to 300 real GitHub issues with LangChain and Gemini, and retrieves similar past incidents from ChromaDB through a FastAPI endpoint.</p>
+          <div class="checks-block">
+            <ul class="checks" aria-label="How the output is checked">
+              <li>Benchmarked on 40 hand-labeled issues</li>
+              <li>Exact-match accuracy and Cohen's kappa</li>
+              <li>Server-side recheck before any alert email</li>
+            </ul>
+            <div class="checks-run">
+              <button type="button" class="run-btn">Run checks</button>
+              <span class="run-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <details class="project-details">
+            <summary>Details</summary>
+            <ul class="detail-list">
+              <li>Similar past incidents found with sentence-transformer embeddings in ChromaDB.</li>
+              <li>Critical issues trigger an n8n alert workflow.</li>
+              <li>Retry with exponential backoff on every model and webhook call.</li>
+              <li>Several prompt revisions tested before reporting the measured result.</li>
+            </ul>
+          </details>
+          <p class="stack">Python · FastAPI · LangChain · Gemini · ChromaDB · n8n</p>
+          <p class="project-links">
+            <a href="https://github.com/Haroonali7816/incident-triage-copilot" target="_blank" rel="noopener">Code</a>
+          </p>
+        </article>
+
+        <article class="project" id="project-energy" data-cat="data">
+          <p class="project-kind">Data engineering</p>
+          <h3 class="project-title">German Energy Market Analytics</h3>
+          <p class="project-summary">Ingests 11.6 years of hourly SMARD market data into a star schema and presents it in a Power BI dashboard, tracing a 2021–22 price spike to the European gas crisis.</p>
+          <div class="checks-block">
+            <ul class="checks" aria-label="How the output is checked">
+              <li>Automated suite for coverage gaps and outliers</li>
+              <li>6,348 API chunks, zero failed pulls</li>
+              <li>Reruns that never duplicate records</li>
+            </ul>
+            <div class="checks-run">
+              <button type="button" class="run-btn">Run checks</button>
+              <span class="run-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <details class="project-details">
+            <summary>Details</summary>
+            <ul class="detail-list">
+              <li>Dimensional star schema built with SQLAlchemy.</li>
+              <li>Power BI dashboard with 8+ DAX measures and 5 visualisations.</li>
+              <li>Renewable share reaching 64%, negative-price hours up 20x since 2018.</li>
+              <li>One unresolved anomaly recorded in the report instead of dropped.</li>
+            </ul>
+          </details>
+          <p class="stack">Python · SQL · SQLAlchemy · Power BI · DAX · pandas</p>
+          <p class="project-links">
+            <a href="https://github.com/Haroonali7816/german-energy-market-analytics" target="_blank" rel="noopener">Code</a>
+          </p>
+        </article>
+
+        <article class="project" id="project-tinyc" data-cat="systems">
+          <p class="project-kind">Compilers</p>
+          <h3 class="project-title">TinyC Compiler</h3>
+          <p class="project-summary">A compiler in Java for a subset of C with pointers and static scoping: custom AST, name, scope and type analysis, and a RISC-V backend.</p>
+          <div class="checks-block">
+            <ul class="checks" aria-label="How the output is checked">
+              <li>Verification conditions prove partial and total correctness</li>
+              <li>Errors reported with exact source locations</li>
+              <li>JUnit suite inside Docker</li>
+            </ul>
+            <div class="checks-run">
+              <button type="button" class="run-btn">Run checks</button>
+              <span class="run-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <details class="project-details">
+            <summary>Details</summary>
+            <ul class="detail-list">
+              <li>Covers pointers, static scoping, global declarations and control flow.</li>
+              <li>Backend handles stack frames, register allocation and function prologues and epilogues.</li>
+              <li>Verification conditions are extracted from annotated source code.</li>
+            </ul>
+          </details>
+          <p class="stack">Java · RISC-V · Static analysis · JUnit · Docker</p>
+          <p class="project-links">
+            <a href="https://github.com/Haroonali7816/TinyC-Compiler" target="_blank" rel="noopener">Code</a>
+          </p>
+        </article>
+
       </div>
 
-    </div>
-  </section>
+      <h3 class="more-title">More builds</h3>
+      <ul class="more">
+        <li id="project-raycast" data-cat="systems">
+          <a href="https://github.com/Haroonali7816/RayCast-in-C" target="_blank" rel="noopener">
+            <span class="more-name">RayCast</span>
+            <span class="more-desc">2.5D raycasting engine in pure C, no external libraries</span>
+            <span class="more-stack">C</span>
+          </a>
+        </li>
+        <li id="project-2048" data-cat="systems">
+          <a href="https://github.com/Haroonali7816/2048" target="_blank" rel="noopener">
+            <span class="more-name">2048</span>
+            <span class="more-desc">Full game logic written in RISC-V assembly</span>
+            <span class="more-stack">RISC-V</span>
+          </a>
+        </li>
+        <li id="project-uttt" data-cat="systems">
+          <a href="https://github.com/Haroonali7816/UTTT" target="_blank" rel="noopener">
+            <span class="more-name">Ultimate Tic-Tac-Toe</span>
+            <span class="more-desc">Nested-board game engine with recursive win evaluation, MVC</span>
+            <span class="more-stack">Java</span>
+          </a>
+        </li>
+        <li id="project-wordle" data-cat="systems">
+          <a href="https://github.com/Haroonali7816/Woordle" target="_blank" rel="noopener">
+            <span class="more-name">Wordle</span>
+            <span class="more-desc">Terminal Wordle with trie-based word validation</span>
+            <span class="more-stack">C</span>
+          </a>
+        </li>
+        <li id="project-titanic" data-cat="ai data">
+          <a href="https://github.com/Haroonali7816/Titanic-Survival-Prediction" target="_blank" rel="noopener">
+            <span class="more-name">Titanic Survival</span>
+            <span class="more-desc">Random Forest with feature engineering, 79.9% accuracy</span>
+            <span class="more-stack">scikit-learn</span>
+          </a>
+        </li>
+      </ul>
+    </section>
 
-  <!-- Education Timeline -->
-  <section id="education">
-    <h2>Education</h2>
-    <div class="timeline">
-      <div class="timeline-item">
-        <span class="timeline-date">Oct 2024 – Present</span>
-        <h3>B.Sc. Computer Science</h3>
-        <p class="timeline-org"><img src="assests/images/saarland-university-logo.webp" alt="Saarland University" class="org-logo" />Saarland University</p>
-        <p>Coursework: Data Structures & Algorithms, Software Engineering,
-          Object-Oriented Programming, Machine Learning & Data Analysis,
-          System Architecture, Statistics, Linear Algebra, Functional
-          Programming.</p>
+    <!-- Skills -->
+    <section id="skills" class="block">
+      <h2 class="block-title">Skills</h2>
+      <p class="block-note">Select a skill to see where I've used it.</p>
+      <dl class="skills">
+        <div><dt>Languages</dt><dd>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage project-energy project-titanic">Python</button>
+          <button type="button" class="skill" data-used="project-energy">SQL</button>
+          <button type="button" class="skill" data-used="project-tinyc project-uttt">Java</button>
+          <button type="button" class="skill" data-used="project-raycast project-wordle">C</button>
+          <button type="button" class="skill">C++</button>
+          <button type="button" class="skill">OCaml</button>
+          <button type="button" class="skill" data-used="project-tinyc project-2048">RISC-V assembly</button>
+        </dd></div>
+        <div><dt>AI &amp; LLMs</dt><dd>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage">AI agents</button>
+          <button type="button" class="skill" data-used="project-triage">RAG</button>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage">LLM evaluation</button>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage">Prompt engineering</button>
+          <button type="button" class="skill" data-used="project-triage">LangChain</button>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage">Gemini</button>
+          <button type="button" class="skill" data-used="project-triage">ChromaDB</button>
+          <button type="button" class="skill" data-used="project-titanic">scikit-learn</button>
+        </dd></div>
+        <div><dt>Backend &amp; cloud</dt><dd>
+          <button type="button" class="skill" data-used="project-bureaucracy project-triage">FastAPI</button>
+          <button type="button" class="skill" data-used="project-bureaucracy">Pydantic</button>
+          <button type="button" class="skill" data-used="project-bureaucracy">PostgreSQL</button>
+          <button type="button" class="skill" data-used="project-bureaucracy">Redis</button>
+          <button type="button" class="skill" data-used="project-bureaucracy">React</button>
+          <button type="button" class="skill" data-used="project-bureaucracy project-tinyc">Docker</button>
+          <button type="button" class="skill" data-used="project-bureaucracy">Render &amp; Vercel</button>
+        </dd></div>
+        <div><dt>Data</dt><dd>
+          <button type="button" class="skill" data-used="project-energy project-titanic">pandas</button>
+          <button type="button" class="skill" data-used="project-titanic">NumPy</button>
+          <button type="button" class="skill" data-used="project-energy project-triage">SQLAlchemy</button>
+          <button type="button" class="skill" data-used="project-energy">ETL pipelines</button>
+          <button type="button" class="skill" data-used="project-energy">Power BI &amp; DAX</button>
+          <button type="button" class="skill">matplotlib</button>
+        </dd></div>
+        <div><dt>Testing &amp; tools</dt><dd>
+          <button type="button" class="skill" data-used="project-bureaucracy">pytest</button>
+          <button type="button" class="skill" data-used="project-tinyc">JUnit</button>
+          <button type="button" class="skill">Git</button>
+          <button type="button" class="skill">Linux</button>
+          <button type="button" class="skill" data-used="project-triage">n8n</button>
+          <button type="button" class="skill">Claude Code</button>
+        </dd></div>
+      </dl>
+      <p class="skill-readout" id="skill-readout" aria-live="polite"></p>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="block block-contact">
+      <h2 class="block-title">Contact</h2>
+      <p class="contact-lead">Open to internships, Werkstudent roles and conversations about any of these projects.</p>
+      <div class="contact-email-row">
+        <p class="contact-email"><a href="mailto:aliharoon017@gmail.com">aliharoon017@gmail.com</a></p>
+        <button type="button" class="copy-btn" id="copy-email" data-copy="aliharoon017@gmail.com">Copy</button>
       </div>
-    </div>
-  </section>
+      <ul class="contact-links">
+        <li><a href="https://github.com/HaroonAli7816" target="_blank" rel="noopener">github.com/HaroonAli7816</a></li>
+        <li><a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </section>
 
-  <!-- Experience Timeline -->
-  <section id="experience">
-    <p class="section-label">Professional Journey</p>
-    <h2>Experience</h2>
-    <div class="timeline">
-      <div class="timeline-item">
-        <span class="timeline-date">Apr 2026 – Sep 2026</span>
-        <h3>Teaching Assistant: Statistics for Data Science & AI</h3>
-        <p class="timeline-org"><img src="assests/images/saarland-university-logo.webp" alt="Saarland University" class="org-logo" />Saarland University</p>
-        <ul class="timeline-list">
-          <li>Led weekly tutorial sessions and designed course materials and assessments for a Statistics for Data Science & AI course.</li>
-          <li>Evaluated the response quality of an in-house LLM chatbot (ALA project) by systematically auditing its outputs against course material and expected reasoning.</li>
-          <li>Built structured test prompts to surface hallucinations, factual errors, and inconsistent reasoning, then logged and categorized recurring failure patterns for the development team.</li>
-          <li>Fed evaluation findings back into the model's iteration cycle, helping tighten alignment between the chatbot's responses and the actual course content.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    <footer class="footer">
+      <p>© 2026 Muhammad Haroon Ali · Saarbrücken, Germany</p>
+    </footer>
+  </main>
+</div>
 
-  <!-- Projects -->
-  <section id="projects">
-    <p class="section-label">Portfolio</p>
-    <h2>Projects.</h2>
-    <p class="projects-hint">hover a project for the full story</p>
-    <div class="projects-grid" id="projects-grid">
+<!-- Command palette: press / or Ctrl+K -->
+<dialog class="palette" id="palette" aria-label="Jump to">
+  <div class="palette-inner">
+    <label class="palette-search">
+      <span class="palette-prompt" aria-hidden="true">›</span>
+      <input type="text" id="palette-input" placeholder="Jump to a section, project or link…" autocomplete="off" spellcheck="false" aria-controls="palette-list" />
+      <kbd>Esc</kbd>
+    </label>
+    <ul class="palette-list" id="palette-list" role="listbox"></ul>
+    <p class="palette-foot"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> open</p>
+  </div>
+</dialog>
 
-      <div class="project-card featured" id="project-triage">
-        <span class="project-index">01<span class="featured-badge">Featured</span></span>
-        <h3>Incident Triage Copilot</h3>
-        <p>An AI-assisted triage system with a FastAPI + SQLAlchemy REST API
-          at its core: Gemini classifies severity/category/summary, a local
-          RAG layer (sentence-transformers + ChromaDB) surfaces similar past
-          incidents, and n8n alerts the team on critical issues with tenacity-based
-          retry/backoff on every external call. Accuracy is tracked against a
-          40-issue hand-labeled evaluation harness rather than claimed blindly.</p>
-        <div class="tags">
-          <span>Python</span><span>FastAPI</span><span>LangChain</span><span>Gemini</span><span>ChromaDB</span><span>SQLAlchemy</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/incident-triage-copilot" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-      <div class="project-card" id="project-energy">
-        <span class="project-index">02</span>
-        <h3>German Energy Market Analytics</h3>
-        <p>An end-to-end analytics pipeline ingesting ~11.6 years of hourly
-          SMARD electricity-market data (6,348 chunks, zero failed pulls) into
-          a dimensional star schema built with SQLAlchemy, backed by an
-          automated data-validation suite for coverage gaps and outliers. A
-          Power BI dashboard with 8+ DAX measures surfaces trends like
-          renewable share reaching 64% and negative-price hours rising 20x
-          since 2018.</p>
-        <div class="tags">
-          <span>Python</span><span>SQL</span><span>SQLAlchemy</span><span>Power BI</span><span>DAX</span><span>pandas</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/german-energy-market-analytics" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-tinyc">
-        <span class="project-index">03</span>
-        <h3>TinyC Compiler & Verification System</h3>
-        <p>A multi-pass C compiler in Java for a subset of C, with a
-          custom AST, multi-phase static analysis, a RISC-V backend, and
-          automated formal verification of program correctness.</p>
-        <div class="tags">
-          <span>Java</span><span>RISC-V</span><span>Static Analysis</span><span>JUnit</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/TinyC-Compiler" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-uttt">
-        <span class="project-index">04</span>
-        <h3>Ultimate Tic-Tac-Toe Engine</h3>
-        <p>A 2-tier nested board game engine with a dynamic rule/constraint
-          system, recursive win evaluation, and clean MVC architecture.</p>
-        <div class="tags">
-          <span>Java</span><span>OOP</span><span>MVC</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/UTTT" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-raycast">
-        <span class="project-index">05</span>
-        <h3>RayCast</h3>
-        <p>A 2.5D rendering engine written in pure C from scratch, with
-          real-time raycasting, custom texture mapping, and a hand-built
-          map parser.</p>
-        <div class="tags">
-          <span>C</span><span>Graphics</span><span>Systems Programming</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/RayCast-in-C" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-2048">
-        <span class="project-index">06</span>
-        <h3>2048 Game</h3>
-        <p>Complete game logic implemented in RISC-V assembly, with a focus
-          on low-level memory management, correctness, and debugging.</p>
-        <div class="tags">
-          <span>RISC-V</span><span>Low-level Programming</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/2048" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-wordle">
-        <span class="project-index">07</span>
-        <h3>Wordle (Trie-Based)</h3>
-        <p>A modular, terminal-based Wordle clone using a Trie data structure
-          for fast input validation and accurate feedback logic.</p>
-        <div class="tags">
-          <span>C</span><span>Trie</span><span>Algorithms</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/Woordle" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-      <div class="project-card" id="project-titanic">
-        <span class="project-index">08</span>
-        <h3>Titanic Survival Prediction</h3>
-        <p>A Random Forest model predicting passenger survival (~79.89%
-          accuracy), with feature engineering and model tuning.</p>
-        <div class="tags">
-          <span>Python</span><span>scikit-learn</span><span>pandas</span>
-        </div>
-        <a href="https://github.com/Haroonali7816/Titanic-Survival-Prediction" target="_blank" class="btn-outline">View Code ↗</a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact">
-    <p class="section-label">Connect With Me</p>
-    <h2>Let's build something great.</h2>
-    <p>Interested in Werkstudent opportunities, collaborations, or discussing
-      any of my projects? I'd love to hear from you.</p>
-    <div class="contact-directory">
-      <a href="mailto:aliharoon017@gmail.com" class="contact-entry">
-        <span class="contact-label">Email</span>
-        <span class="contact-value">aliharoon017@gmail.com</span>
-      </a>
-      <a href="https://github.com/HaroonAli7816" target="_blank" class="contact-entry">
-        <span class="contact-label">GitHub</span>
-        <span class="contact-value">github.com/HaroonAli7816</span>
-      </a>
-      <a href="https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true" target="_blank" class="contact-entry">
-        <span class="contact-label">LinkedIn</span>
-        <span class="contact-value">in/muhammad-haroon-ali</span>
-      </a>
-    </div>
-  </section>
-
-  <footer>
-    <p>© 2026 Muhammad Haroon Ali · Computer Science Student · Saarbrücken, Germany</p>
-  </footer>
-
-  <script src="js/main.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

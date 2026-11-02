@@ -1,489 +1,356 @@
-/* ==========================================================================
-   1. LOADER — fast eased fill from 0% to 100%, then fades out
-   ========================================================================== */
-window.addEventListener('load', () => {
-  const loader = document.getElementById('loader');
-  const percentText = document.getElementById('loader-percent');
-  const fill = document.getElementById('loader-fill');
-  const duration = 350; // ms — quick and smooth
+/* Theme toggle: cycles System -> Light -> Dark. "System" leaves the
+   data-theme attribute off so the OS preference decides. */
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById('theme-toggle');
+  const label = document.getElementById('theme-value');
+  const order = ['system', 'light', 'dark'];
+  const names = { system: 'System', light: 'Light', dark: 'Dark' };
+
+  let current = 'system';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') current = saved;
+  } catch (e) {}
+
+  function apply(mode) {
+    if (mode === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', mode);
+    if (label) label.textContent = names[mode];
+    try {
+      if (mode === 'system') localStorage.removeItem('theme');
+      else localStorage.setItem('theme', mode);
+    } catch (e) {}
+  }
+
+  apply(current);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      current = order[(order.indexOf(current) + 1) % order.length];
+      apply(current);
+    });
+  }
+})();
+
+/* Highlight the nav link for the section currently in view. */
+(function () {
+  const links = Array.from(document.querySelectorAll('.rail-nav a'));
+  const sections = links
+    .map((a) => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+  if (!('IntersectionObserver' in window) || sections.length === 0) return;
+
+  const setActive = (id) => {
+    links.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === '#' + id));
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    },
+    { rootMargin: '-35% 0px -60% 0px' }
+  );
+  sections.forEach((s) => observer.observe(s));
+})();
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Small toast for feedback ("Copied", etc.). */
+const toast = (() => {
+  const el = document.getElementById('toast');
+  let timer;
+  return (msg) => {
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    clearTimeout(timer);
+    timer = setTimeout(() => el.classList.remove('is-visible'), 1800);
+  };
+})();
+
+/* Scroll to an element and briefly outline it. */
+function jumpTo(el) {
+  if (!el) return;
+  el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  if (el.matches('.project, .more li')) {
+    el.classList.remove('is-flash');
+    void el.offsetWidth;
+    el.classList.add('is-flash');
+  }
+}
+
+/* ---------- Run checks: each check goes pending, then passes in turn ---------- */
+function runChecks(project) {
+  const items = Array.from(project.querySelectorAll('.checks li'));
+  const btn = project.querySelector('.run-btn');
+  const status = project.querySelector('.run-status');
+  if (!items.length || (btn && btn.disabled)) return;
+
+  if (btn) btn.disabled = true;
+  if (status) status.textContent = 'running…';
+  items.forEach((li) => { li.classList.remove('is-pass'); li.classList.add('is-pending'); });
+
+  const step = reduceMotion ? 0 : 420;
   const start = performance.now();
-
-  // Quick, dim build-log flicker behind the percentage — a fast nod to a
-  // real compile, not a decorative loop. Skipped for reduced-motion.
-  const logEl = document.getElementById('loader-log');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let logInterval = null;
-  if (logEl && !prefersReducedMotion) {
-    const logLines = ['resolving dependencies…', 'compiling modules…', 'linking objects…', 'optimizing build…'];
-    let li = 0;
-    logInterval = setInterval(() => {
-      logEl.textContent = logLines[li % logLines.length];
-      logEl.classList.remove('flicker');
-      void logEl.offsetWidth; // restart the animation
-      logEl.classList.add('flicker');
-      li++;
-    }, 90);
-  }
-
-  function tick(now) {
-    const elapsed = now - start;
-    const t = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic, feels snappy
-    const pct = Math.round(eased * 100);
-    percentText.textContent = pct + '%';
-    fill.style.width = (eased * 100) + '%';
-
-    if (t < 1) {
-      requestAnimationFrame(tick);
-    } else {
-      if (logInterval) clearInterval(logInterval);
-      setTimeout(() => loader.classList.add('hidden'), 200);
-    }
-  }
-  requestAnimationFrame(tick);
-});
-
-/* ==========================================================================
-   2. THEME TOGGLE (light / dark)
-   ========================================================================== */
-const themeToggleBtn = document.getElementById('theme-toggle');
-const bodyEl = document.body;
-
-// Load saved preference, default to dark
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') {
-  bodyEl.classList.add('light');
-  themeToggleBtn.textContent = '☀';
-} else {
-  themeToggleBtn.textContent = '🌙';
-}
-
-themeToggleBtn.addEventListener('click', () => {
-  bodyEl.classList.toggle('light');
-  const isLight = bodyEl.classList.contains('light');
-  themeToggleBtn.textContent = isLight ? '☀' : '🌙';
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-});
-
-/* ==========================================================================
-   3. SKILLS MARQUEE — duplicate track content for a seamless infinite loop
-   ========================================================================== */
-const marqueeTrack = document.querySelector('.marquee-track');
-if (marqueeTrack) {
-  marqueeTrack.innerHTML += marqueeTrack.innerHTML; // duplicate once
-}
-
-/* ==========================================================================
-   4. ANIMATED STAT COUNTERS — count up when hero scrolls into view
-   ========================================================================== */
-const statNumbers = document.querySelectorAll('.stat-number');
-
-const animateCounter = (el) => {
-  const target = parseInt(el.getAttribute('data-target'), 10);
-  let current = 0;
-  const duration = 1200; // ms
-  const stepTime = 30;
-  const steps = duration / stepTime;
-  const increment = target / steps;
-
-  const counter = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      el.textContent = target;
-      clearInterval(counter);
-    } else {
-      el.textContent = Math.floor(current);
-    }
-  }, stepTime);
-};
-
-const statsObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      statNumbers.forEach(animateCounter);
-      observer.disconnect(); // only run once
-    }
-  });
-}, { threshold: 0.4 });
-
-const heroStats = document.querySelector('.hero-stats');
-if (heroStats) statsObserver.observe(heroStats);
-
-/* ==========================================================================
-   5. SCROLL REVEAL ANIMATIONS
-   Automatically tags key elements with .reveal, then fades them in
-   as they enter the viewport using IntersectionObserver.
-   ========================================================================== */
-const revealSelectors = [
-  '.section-label',
-  'section h2',
-  '#about .about-text',
-  '.timeline-item',
-  '.project-card',
-  '.skills-grid span',
-  '#contact p',
-  '.contact-entry',
-  '.hero-stats .stat'
-];
-
-const revealElements = document.querySelectorAll(revealSelectors.join(','));
-revealElements.forEach((el, i) => {
-  el.classList.add('reveal');
-  el.style.transitionDelay = `${(i % 6) * 30}ms`; // subtle cascade within groups
-});
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target); // animate once
-    }
-  });
-}, { threshold: 0.15 });
-
-revealElements.forEach((el) => revealObserver.observe(el));
-
-
-/* ==========================================================================
-   8. SITE SEARCH — lightweight in-page navigation search
-   ========================================================================== */
-const searchIndex = [
-  { label: 'About',                          id: 'about',           keywords: 'about summary bio who is haroon' },
-  { label: 'Technical Skills',                id: 'about',           keywords: 'skills java python c c++ html css javascript git ocaml sql linux' },
-  { label: 'Skills',                          id: 'skills-panel',    keywords: 'skills toolkit languages frameworks tools github stats' },
-  { label: 'Education: Saarland University',  id: 'education',       keywords: 'education university saarland bsc computer science degree study' },
-  { label: 'Experience: Teaching Assistant',   id: 'experience',      keywords: 'experience work job teaching assistant statistics' },
-  { label: 'Projects',                        id: 'projects',        keywords: 'projects portfolio work code repos' },
-  { label: 'Incident Triage Copilot',         id: 'project-triage',  keywords: 'incident triage copilot fastapi langchain gemini rag chromadb sqlalchemy ai llm agent' },
-  { label: 'German Energy Market Analytics',  id: 'project-energy',  keywords: 'german energy market analytics smard sql sqlalchemy power bi dax pandas data engineering' },
-  { label: 'TinyC Compiler & Verification',   id: 'project-tinyc',   keywords: 'tinyc compiler verification java riscv static analysis junit' },
-  { label: 'Ultimate Tic-Tac-Toe Engine',     id: 'project-uttt',    keywords: 'tic tac toe uttt java oop mvc game' },
-  { label: 'RayCast',                         id: 'project-raycast', keywords: 'raycast graphics c engine 2.5d systems' },
-  { label: '2048 Game',                       id: 'project-2048',    keywords: '2048 riscv assembly game low-level' },
-  { label: 'Wordle (Trie-Based)',             id: 'project-wordle',  keywords: 'wordle trie word game algorithms c' },
-  { label: 'Titanic Survival Prediction',     id: 'project-titanic', keywords: 'titanic machine learning python scikit-learn pandas ml' },
-  { label: 'Contact',                         id: 'contact',         keywords: 'contact email linkedin github reach out message' },
-];
-
-const searchInput = document.getElementById('site-search');
-const searchResultsEl = document.getElementById('search-results');
-
-if (searchInput && searchResultsEl) {
-  let activeIndex = -1;
-
-  const renderResults = (matches) => {
-    searchResultsEl.innerHTML = '';
-    if (matches.length === 0) {
-      searchResultsEl.innerHTML = '<div class="no-results">No matches found</div>';
-    } else {
-      matches.forEach((match) => {
-        const link = document.createElement('a');
-        link.href = `#${match.id}`;
-        link.textContent = match.label;
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          goToResult(match.id);
-        });
-        searchResultsEl.appendChild(link);
-      });
-    }
-    activeIndex = -1;
-    searchResultsEl.classList.add('visible');
-  };
-
-  const goToResult = (id) => {
-    const target = document.getElementById(id);
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    searchResultsEl.classList.remove('visible');
-    navSearchWrap.classList.remove('expanded');
-    searchInput.value = '';
-    searchInput.blur();
-  };
-
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-      searchResultsEl.classList.remove('visible');
-      return;
-    }
-    const matches = searchIndex.filter((item) =>
-      item.label.toLowerCase().includes(query) || item.keywords.includes(query)
-    );
-    renderResults(matches);
-  });
-
-  searchInput.addEventListener('focus', () => {
-    if (searchInput.value.trim()) searchResultsEl.classList.add('visible');
-  });
-
-  searchInput.addEventListener('keydown', (e) => {
-    const links = Array.from(searchResultsEl.querySelectorAll('a'));
-    if (links.length === 0) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      activeIndex = (activeIndex + 1) % links.length;
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      activeIndex = (activeIndex - 1 + links.length) % links.length;
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      const chosen = links[activeIndex] || links[0];
-      chosen.click();
-      return;
-    } else if (e.key === 'Escape') {
-      searchResultsEl.classList.remove('visible');
-      navSearchWrap.classList.remove('expanded');
-      searchInput.value = '';
-      searchInput.blur();
-      return;
-    } else {
-      return;
-    }
-
-    links.forEach((l) => l.classList.remove('active-result'));
-    links[activeIndex].classList.add('active-result');
-  });
-}
-
-const searchToggleBtn = document.getElementById('search-toggle');
-const navSearchWrap = document.getElementById('nav-search');
-
-if (searchToggleBtn && navSearchWrap && searchInput) {
-  searchToggleBtn.addEventListener('click', () => {
-    navSearchWrap.classList.toggle('expanded');
-    if (navSearchWrap.classList.contains('expanded')) {
-      searchInput.focus();
-    } else {
-      searchInput.value = '';
-      searchResultsEl.classList.remove('visible');
-    }
-  });
-}
-
-document.addEventListener('click', (e) => {
-  if (!navSearchWrap.contains(e.target)) {
-    searchResultsEl.classList.remove('visible');
-    if (!searchInput.value.trim()) {
-      navSearchWrap.classList.remove('expanded');
-    }
-  }
-});
-
-/* ==========================================================================
-   10. HERO ROTATING WORD — cycles the highlighted word for a curiosity hook
-   ========================================================================== */
-const rotatingWordEl = document.getElementById('rotating-word');
-if (rotatingWordEl) {
-  const words = ['language models', 'data pipelines', 'systems', 'compilers', 'machines'];
-  let wordIndex = 0;
-
-  setInterval(() => {
-    rotatingWordEl.classList.add('swap');
+  items.forEach((li, i) => {
     setTimeout(() => {
-      wordIndex = (wordIndex + 1) % words.length;
-      rotatingWordEl.textContent = words[wordIndex];
-      rotatingWordEl.classList.remove('swap');
-    }, 250);
-  }, 2200);
+      li.classList.remove('is-pending');
+      li.classList.add('is-pass');
+      if (i === items.length - 1) {
+        const secs = ((performance.now() - start) / 1000).toFixed(1);
+        if (status) status.textContent = `${items.length}/${items.length} passed · ${secs}s`;
+        if (btn) { btn.disabled = false; btn.textContent = 'Run again'; }
+      }
+    }, step * (i + 1));
+  });
 }
 
-/* ==========================================================================
-   11. NAVBAR — subtle shadow/background boost on scroll (optional polish)
-   ========================================================================== */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 20) {
-    navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.25)';
-  } else {
-    navbar.style.boxShadow = 'none';
-  }
+document.querySelectorAll('.project').forEach((project) => {
+  const btn = project.querySelector('.run-btn');
+  if (btn) btn.addEventListener('click', () => runChecks(project));
+
+  // Cursor spotlight
+  project.addEventListener('pointermove', (e) => {
+    const r = project.getBoundingClientRect();
+    project.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    project.style.setProperty('--my', `${e.clientY - r.top}px`);
+  });
 });
 
-
-/* ==========================================================================
-   12. MOBILE MENU — hamburger toggle for the slide-down drawer
-   ========================================================================== */
-const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-const mobileMenu = document.getElementById('mobile-menu');
-
-if (mobileMenuToggle && mobileMenu) {
-  const closeMobileMenu = () => {
-    mobileMenuToggle.classList.remove('active');
-    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-    mobileMenu.classList.remove('open');
-  };
-
-  mobileMenuToggle.addEventListener('click', () => {
-    const isOpen = mobileMenu.classList.toggle('open');
-    mobileMenuToggle.classList.toggle('active', isOpen);
-    mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  mobileMenu.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', closeMobileMenu);
-  });
-
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) closeMobileMenu();
-  });
+// Run each project's checks once, the first time it scrolls into view.
+if ('IntersectionObserver' in window && !reduceMotion) {
+  const seen = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        runChecks(entry.target);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.55 });
+  document.querySelectorAll('.project').forEach((p) => seen.observe(p));
 }
 
-/* ==========================================================================
-   14. AMBIENT BACKGROUND — a sparse field of circuit-trace / syntax-tree
-   paths: each one a short Manhattan-routed line (like a PCB trace or an
-   AST branch) ending in a small pad, with a faint pulse of "signal"
-   travelling along it on a loop. Deliberately sparse and quiet (one muted
-   color, slow pulses) so it reads as a purposeful technical motif rather
-   than a decorative particle template.
-   ========================================================================== */
-(function initBgGraph() {
-  const canvas = document.getElementById('bg-graph');
-  if (!canvas || !canvas.getContext) return;
-  const ctx = canvas.getContext('2d');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ---------- Project filters ---------- */
+(function () {
+  const buttons = Array.from(document.querySelectorAll('.filter'));
+  const items = Array.from(document.querySelectorAll('.projects .project, .more li'));
+  const moreTitle = document.querySelector('.more-title');
+  const moreItems = Array.from(document.querySelectorAll('.more li'));
 
-  let w = 0, h = 0, traces = [];
-  let rgb = [232, 163, 61]; // fallback amber, replaced below from the live theme
-  let isLight = false;
-  // Same numeric alpha reads far more intense on a light background than a
-  // dark one, so line/pad/pulse opacity is scaled down per theme.
-  let alphaScale = 1;
+  const matches = (el, f) => f === 'all' || (el.dataset.cat || '').split(' ').includes(f);
 
-  function readTheme() {
-    isLight = document.body.classList.contains('light');
-    alphaScale = isLight ? 0.8 : 1;
-    const hex = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-    const m = hex.replace('#', '').match(/.{1,2}/g);
-    if (m && m.length === 3) rgb = m.map((x) => parseInt(x, 16));
-  }
-  readTheme();
+  buttons.forEach((b) => {
+    const count = items.filter((el) => matches(el, b.dataset.filter)).length;
+    const slot = b.querySelector('.filter-count');
+    if (slot) slot.textContent = count;
+  });
 
-  function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-  }
-
-  // Build one Manhattan-routed path (1-2 right-angle bends) starting near
-  // (x, y): a trunk segment, then a branch, mimicking a PCB trace or a
-  // branching AST edge rather than an arbitrary line. `dir` biases the
-  // horizontal direction (-1 or 1) so traces confined to a margin keep
-  // routing toward the viewport edge instead of drifting back over content.
-  function buildTrace(x, y, dir, maxLen) {
-    const points = [{ x, y }];
-    const bends = 1 + Math.round(Math.random());
-    let cx = x, cy = y;
-    let horizontal = true;
-    for (let i = 0; i < bends; i++) {
-      const len = Math.min(50 + Math.random() * 140, maxLen);
-      if (horizontal) cx += len * dir; else cy += len * (Math.random() < 0.5 ? -1 : 1);
-      points.push({ x: cx, y: cy });
-      horizontal = !horizontal;
-    }
-    const segLengths = [];
-    let total = 0;
-    for (let i = 1; i < points.length; i++) {
-      const d = Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
-      segLengths.push(d);
-      total += d;
-    }
-    return {
-      points,
-      segLengths,
-      total,
-      duration: 4000 + Math.random() * 4000,
-      delay: Math.random() * 6000,
-    };
-  }
-
-  // Traces are confined to the empty margins outside the page's text column
-  // (--max-width) so they never run behind paragraphs or cards, at any
-  // scroll position — only decorate genuinely empty space either side.
-  function seedTraces() {
-    const maxContentWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--max-width')) || 1100;
-    const margin = (w - maxContentWidth) / 2 - 16; // leave a small gap from the content edge too
-    traces = [];
-    if (margin < 30) return; // only truly narrow/mobile viewports have no safe margin at all
-
-    // Segment length scales with the available margin (via buildTrace's
-    // maxLen clamp) so this still looks right on a merely-tight margin,
-    // not just a generous one — no hard cliff at common laptop widths.
-    const zones = [
-      { from: 0, to: margin, dir: -1 },
-      { from: w - margin, to: w, dir: 1 },
-    ];
-    const perZone = Math.max(7, Math.min(18, Math.round((h * margin) / 26000)));
-    zones.forEach((zone) => {
-      for (let i = 0; i < perZone; i++) {
-        const x = zone.dir === -1 ? zone.to - Math.random() * margin * 0.85 : zone.from + Math.random() * margin * 0.85;
-        const y = Math.random() * h;
-        traces.push(buildTrace(x, y, zone.dir, margin * 0.9));
+  function apply(f) {
+    buttons.forEach((b) => {
+      const on = b.dataset.filter === f;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    items.forEach((el) => {
+      const show = matches(el, f);
+      const wasHidden = el.hidden;
+      el.hidden = !show;
+      if (show && wasHidden && !reduceMotion) {
+        el.classList.remove('is-entering');
+        void el.offsetWidth;
+        el.classList.add('is-entering');
       }
     });
+    if (moreTitle) moreTitle.hidden = moreItems.every((li) => li.hidden);
   }
 
-  resize();
-  seedTraces();
-  window.addEventListener('resize', () => { resize(); seedTraces(); });
+  buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter)));
+  window.__showAllProjects = () => apply('all');
+})();
 
-  // Re-read the theme when it's toggled (amber in dark, bronze in light).
-  const themeBtn = document.getElementById('theme-toggle');
-  if (themeBtn) themeBtn.addEventListener('click', () => setTimeout(readTheme, 0));
+/* ---------- Skills: select one to see where it was used ---------- */
+(function () {
+  const chips = Array.from(document.querySelectorAll('.skill'));
+  const readout = document.getElementById('skill-readout');
+  if (!readout) return;
 
-  // Position of the traveling "signal" pulse at fraction t (0-1) along a trace.
-  function pointAt(trace, t) {
-    let dist = t * trace.total;
-    for (let i = 0; i < trace.segLengths.length; i++) {
-      const segLen = trace.segLengths[i];
-      if (dist <= segLen || i === trace.segLengths.length - 1) {
-        const p0 = trace.points[i];
-        const p1 = trace.points[i + 1];
-        const f = segLen > 0 ? Math.min(dist / segLen, 1) : 0;
-        return { x: p0.x + (p1.x - p0.x) * f, y: p0.y + (p1.y - p0.y) * f };
+  const titleOf = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const t = el.querySelector('.project-title, .more-name');
+    return t ? t.textContent.trim() : null;
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const wasOn = chip.classList.contains('is-on');
+      chips.forEach((c) => c.classList.remove('is-on'));
+      readout.textContent = '';
+      if (wasOn) return;
+      chip.classList.add('is-on');
+
+      const ids = (chip.dataset.used || '').split(' ').filter(Boolean);
+      const name = chip.textContent.trim();
+      if (!ids.length) {
+        readout.textContent = `${name}: used in coursework and day-to-day work rather than a featured project.`;
+        return;
       }
-      dist -= segLen;
-    }
-    return trace.points[trace.points.length - 1];
-  }
-
-  function drawFrame(now) {
-    ctx.clearRect(0, 0, w, h);
-    const [cr, cg, cb] = rgb;
-
-    traces.forEach((trace) => {
-      // The static trace path.
-      ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.32 * alphaScale})`;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(trace.points[0].x, trace.points[0].y);
-      for (let i = 1; i < trace.points.length; i++) ctx.lineTo(trace.points[i].x, trace.points[i].y);
-      ctx.stroke();
-
-      // A small pad at each end, like a solder pad / AST leaf node.
-      ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.55 * alphaScale})`;
-      [trace.points[0], trace.points[trace.points.length - 1]].forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.4, 0, Math.PI * 2);
-        ctx.fill();
+      readout.append(`${name} is used in `);
+      ids.forEach((id, i) => {
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = titleOf(id) || id;
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (window.__showAllProjects) window.__showAllProjects();
+          jumpTo(document.getElementById(id));
+        });
+        readout.append(a);
+        if (i < ids.length - 2) readout.append(', ');
+        else if (i === ids.length - 2) readout.append(' and ');
       });
-
-      if (!prefersReducedMotion) {
-        // A faint pulse travels the trace on a loop, reading as a signal
-        // moving through a circuit rather than a randomly drifting particle.
-        const t = ((now + trace.delay) % trace.duration) / trace.duration;
-        const p = pointAt(trace, t);
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `rgba(${cr}, ${cg}, ${cb}, ${0.9 * alphaScale})`;
-        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${0.85 * alphaScale})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
+      readout.append('.');
     });
+  });
+})();
 
-    if (!prefersReducedMotion) requestAnimationFrame(drawFrame);
+/* ---------- Copy email ---------- */
+(function () {
+  const btn = document.getElementById('copy-email');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const text = btn.dataset.copy;
+    const fallback = () => {
+      const email = document.querySelector('.contact-email a');
+      const range = document.createRange();
+      range.selectNodeContents(email);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      toast('Email selected. Press Ctrl+C to copy.');
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied';
+        toast('Email copied');
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+})();
+
+/* ---------- Command palette (press / or Ctrl+K) ---------- */
+(function () {
+  const dialog = document.getElementById('palette');
+  const input = document.getElementById('palette-input');
+  const list = document.getElementById('palette-list');
+  const openBtn = document.getElementById('palette-open');
+  if (!dialog || !input || !list || typeof dialog.showModal !== 'function') {
+    if (openBtn) openBtn.hidden = true;
+    return;
   }
 
-  drawFrame(0);
+  const items = [];
+  document.querySelectorAll('.rail-nav a').forEach((a) => {
+    items.push({ label: a.textContent.trim(), kind: 'Section', run: () => jumpTo(document.querySelector(a.getAttribute('href'))) });
+  });
+  document.querySelectorAll('.project, .more li').forEach((el) => {
+    const t = el.querySelector('.project-title, .more-name');
+    if (!t) return;
+    items.push({
+      label: t.textContent.trim(),
+      kind: 'Project',
+      keywords: el.textContent.toLowerCase(),
+      run: () => { if (window.__showAllProjects) window.__showAllProjects(); jumpTo(el); },
+    });
+  });
+  document.querySelectorAll('.entry').forEach((el) => {
+    const t = el.querySelector('.entry-title span');
+    if (!t) return;
+    items.push({ label: t.textContent.trim(), kind: el.closest('#education') ? 'Education' : 'Experience', keywords: el.textContent.toLowerCase(), run: () => jumpTo(el) });
+  });
+  const link = (label, href) => ({ label, kind: 'Link', run: () => {
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    document.body.append(a); a.click(); a.remove();
+  } });
+  items.push(link('Bureaucracy Navigator live demo', 'https://bureaucracy-navigator-gamma.vercel.app'));
+  items.push(link('GitHub', 'https://github.com/HaroonAli7816'));
+  items.push(link('LinkedIn', 'https://www.linkedin.com/in/muhammad-haroon-ali-1477a9286/?skipRedirect=true'));
+  items.push(link('Résumé (PDF)', 'assests/documents/resume.pdf'));
+  items.push({ label: 'Copy email address', kind: 'Action', run: () => document.getElementById('copy-email')?.click() });
+  items.push({ label: 'Switch theme', kind: 'Action', run: () => document.getElementById('theme-toggle')?.click() });
+  items.push({ label: 'Run all project checks', kind: 'Action', run: () => {
+    if (window.__showAllProjects) window.__showAllProjects();
+    jumpTo(document.getElementById('projects'));
+    document.querySelectorAll('.project').forEach((p) => runChecks(p));
+  } });
+
+  let shown = [];
+  let active = 0;
+
+  function render() {
+    const q = input.value.trim().toLowerCase();
+    shown = items.filter((it) => !q || it.label.toLowerCase().includes(q) || it.kind.toLowerCase().includes(q) || (it.keywords || '').includes(q));
+    active = Math.min(active, Math.max(shown.length - 1, 0));
+    list.innerHTML = '';
+    if (!shown.length) {
+      const li = document.createElement('li');
+      li.className = 'palette-empty';
+      li.textContent = `Nothing matches "${input.value}".`;
+      list.append(li);
+      return;
+    }
+    shown.forEach((it, i) => {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', i === active ? 'true' : 'false');
+      li.innerHTML = '<span class="p-label"></span><span class="p-kind"></span>';
+      li.querySelector('.p-label').textContent = it.label;
+      li.querySelector('.p-kind').textContent = it.kind;
+      li.addEventListener('mousemove', () => { if (active !== i) { active = i; mark(); } });
+      li.addEventListener('click', () => choose(i));
+      list.append(li);
+    });
+  }
+  function mark() {
+    Array.from(list.children).forEach((li, i) => li.setAttribute('aria-selected', i === active ? 'true' : 'false'));
+    const cur = list.children[active];
+    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+  }
+  function choose(i) {
+    const it = shown[i];
+    if (!it) return;
+    dialog.close();
+    it.run();
+  }
+  function open() {
+    input.value = '';
+    active = 0;
+    render();
+    dialog.showModal();
+    input.focus();
+  }
+
+  input.addEventListener('input', () => { active = 0; render(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % Math.max(shown.length, 1); mark(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + shown.length) % Math.max(shown.length, 1); mark(); }
+    else if (e.key === 'Enter') { e.preventDefault(); choose(active); }
+  });
+  dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  if (openBtn) openBtn.addEventListener('click', open);
+
+  document.addEventListener('keydown', (e) => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '') || document.activeElement?.isContentEditable;
+    if ((e.key === '/' && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
+      if (dialog.open) return;
+      e.preventDefault();
+      open();
+    }
+  });
 })();
