@@ -91,21 +91,11 @@ ul, ol { padding: 0; list-style: none; }
 
 /* ---------- Rail ---------- */
 .rail {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
+  align-self: start;
   padding-block: 48px 32px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-@media (min-width: 1001px) and (max-height: 860px) {
-  .portrait-wrap { width: 140px; }
-  .rail { gap: 24px; padding-block: 36px 24px; }
 }
 
 .rail-top { display: flex; flex-direction: column; gap: 14px; }
@@ -186,7 +176,6 @@ ul, ol { padding: 0; list-style: none; }
 .rail-nav a.is-active::before { width: 48px; background: var(--accent); }
 
 .rail-bottom {
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
